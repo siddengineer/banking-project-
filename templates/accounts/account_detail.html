@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Account Passbook - {{ account.masked_number }} | Bharat Nidhi Bank{% endblock %}
+
+{% block content %}
+<div class="bnb-page-container">
+  <!-- Back Breadcrumb & Header -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 pb-2 border-bottom">
+    <div class="d-flex align-items-center gap-3">
+      <a href="{% url 'accounts:list' %}" class="btn btn-outline-secondary btn-sm rounded-circle p-2" title="Back to Accounts">
+        <i class="bi bi-arrow-left"></i>
+      </a>
+      <div>
+        <h2 class="h4 fw-bold text-dark mb-0">Digital Passbook &amp; Account Details</h2>
+        <span class="text-muted small">Account: {{ account.masked_number }} &bull; {{ account.account_type.type_name }}</span>
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'transactions:transfer_new' %}" class="btn btn-bnb-primary btn-sm px-3 shadow-sm">
+        <i class="bi bi-send me-1"></i> Send Money
+      </a>
+      <a href="{% url 'transactions:statement' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-download me-1"></i> Download Statement
+      </a>
+    </div>
+  </div>
+
+  {% if banner %}
+    <div class="alert alert-warning py-2 px-3 small mb-4">
+      <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ banner }}
+    </div>
+  {% endif %}
+
+  <div class="row g-4 mb-4">
+    <!-- Balance & Quick Info Banner -->
+    <div class="col-lg-5">
+      <div class="bnb-account-card p-4 rounded-4 shadow-sm h-100 d-flex flex-direction-column justify-content-between">
+        <div>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="bnb-account-type">{{ account.account_type.type_name }}</span>
+            <span class="badge {% if account.status == 'ACTIVE' %}bg-success{% else %}bg-secondary{% endif %} rounded-pill px-3">
+              {{ account.get_status_display|default:account.status }}
+            </span>
+          </div>
+          <div class="text-white-50 small text-uppercase letter-spacing-1">Available Balance</div>
+          <div class="bnb-account-balance">₹{{ account.available_balance }}</div>
+          <div class="text-white-50 small mt-1">
+            Ledger Balance: <strong>₹{{ account.balance }}</strong>
+          </div>
+        </div>
+
+        <div class="pt-4 border-top border-white-50 mt-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-white-50" style="font-size: 0.75rem;">Account Number</div>
+              <div class="bnb-account-num fs-5">{{ account.masked_number }}</div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-light" onclick="navigator.clipboard.writeText('{{ account.account_number }}'); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy', 1500);" title="Copy Full Number">
+              Copy
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Branch & Nominee Info -->
+    <div class="col-lg-7">
+      <div class="card border shadow-sm rounded-4 h-100">
+        <div class="card-header bg-white py-3 px-4 border-bottom fw-bold text-dark">
+          <i class="bi bi-building text-primary me-2"></i> Branch &amp; Compliance Details
+        </div>
+        <div class="card-body p-4">
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <span class="text-muted small d-block">Home Branch</span>
+              <strong class="text-dark">{{ account.branch.branch_name }}</strong>
+              <div class="text-muted small">{{ account.branch.city }}, {{ account.branch.state }}</div>
+            </div>
+
+            <div class="col-sm-6">
+              <span class="text-muted small d-block">Branch IFSC Code</span>
+              <div class="d-flex align-items-center gap-2">
+                <span class="font-monospace fw-bold text-primary fs-6">{{ account.branch.ifsc_code }}</span>
+                <button type="button" class="btn btn-sm btn-link p-0 text-decoration-none" onclick="navigator.clipboard.writeText('{{ account.branch.ifsc_code }}'); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy', 1500);">
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <div class="col-sm-6">
+              <span class="text-muted small d-block">MICR Code</span>
+              <span class="font-monospace text-dark">{{ account.branch.micr_code|default:"110002001" }}</span>
+            </div>
+
+            <div class="col-sm-6">
+              <span class="text-muted small d-block">Account Opening Date</span>
+              <span class="text-dark">{{ account.opened_at|date:"d M Y" }}</span>
+            </div>
+
+            {% if account.nominee %}
+              <div class="col-12 pt-2 border-top">
+                <span class="text-muted small d-block"><i class="bi bi-person-heart text-danger me-1"></i> Registered Nominee</span>
+                <div class="fw-semibold text-dark">
+                  {{ account.nominee.name }} ({{ account.nominee.relation }}) &bull; Share: {{ account.nominee.percentage_share }}%
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Transactions Table for This Account -->
+  <div class="card border shadow-sm rounded-4 overflow-hidden mb-4">
+    <div class="card-header bg-white py-3 px-4 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div>
+        <h5 class="h6 fw-bold text-dark mb-0">
+          <i class="bi bi-clock-history text-primary me-2"></i> Passbook Transactions
+        </h5>
+        <small class="text-muted">Latest debits and credits recorded on this account</small>
+      </div>
+      <div>
+        <a href="{% url 'transactions:history' %}?account={{ account.pk }}" class="btn btn-sm btn-outline-primary">
+          <i class="bi bi-funnel me-1"></i> Filter &amp; Search All
+        </a>
+      </div>
+    </div>
+
+    <div class="card-body p-0">
+      {% include "components/transaction_table.html" with transactions=transactions %}
+    </div>
+  </div>
+</div>
+{% endblock %}

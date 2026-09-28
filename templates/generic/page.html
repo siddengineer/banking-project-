@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="bnb-page-container">
+  <!-- Top header row with title and primary actions -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 pb-2 border-bottom">
+    <div>
+      <h2 class="h3 fw-bold text-dark mb-1">{{ title }}</h2>
+      {% if banner %}
+        <div class="alert alert-warning py-2 px-3 small mb-0 mt-2 d-inline-block">
+          <i class="bi bi-info-circle me-1"></i> {{ banner }}
+        </div>
+      {% endif %}
+    </div>
+
+    {% if links or post_actions %}
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        {% for l in links %}
+          <a href="{{ l.url }}" class="btn btn-bnb-primary btn-sm px-3 shadow-sm">
+            <i class="bi bi-arrow-right-circle me-1"></i> {{ l.text }}
+          </a>
+        {% endfor %}
+        {% for a in post_actions %}
+          <form method="post" action="{{ a.url }}" class="d-inline m-0">
+            {% csrf_token %}
+            {% for k, v in a.fields.items %}
+              <input type="hidden" name="{{ k }}" value="{{ v }}">
+            {% endfor %}
+            <button type="submit" class="btn btn-outline-danger btn-sm">
+              {{ a.label }}
+            </button>
+          </form>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Filter Form (if present, e.g. Transactions History) -->
+  {% if filter_form %}
+    <div class="card border mb-4 shadow-sm">
+      <div class="card-header bg-light py-2 px-3 d-flex align-items-center gap-2 fw-semibold text-secondary">
+        <i class="bi bi-funnel"></i> Filters & Search
+      </div>
+      <div class="card-body p-3">
+        <form method="get" class="row g-3 align-items-end">
+          {% for field in filter_form %}
+            <div class="col-md-3 col-sm-6">
+              <label class="form-label small fw-bold text-dark">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}
+                <div class="text-danger small mt-1">{{ field.errors.0 }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <div class="col-md-3 col-sm-6 d-flex gap-2">
+            <button type="submit" class="btn btn-bnb-primary btn-sm flex-grow-1">
+              <i class="bi bi-search me-1"></i> Apply Filter
+            </button>
+            <a href="{{ request.path }}" class="btn btn-outline-secondary btn-sm">Reset</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Key Details Box (if present, e.g. Account Details, Profile, Receipt) -->
+  {% if details %}
+    <div class="card border mb-4 shadow-sm">
+      <div class="card-header bg-light py-2 px-3 fw-semibold text-secondary d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-info-circle me-1"></i> Summary Information</span>
+        {% if "receipt" in request.path or "statement" in request.path %}
+          <button class="btn btn-outline-primary btn-sm" onclick="window.print()"><i class="bi bi-printer me-1"></i> Print Document</button>
+        {% endif %}
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-bordered mb-0">
+            <tbody>
+              {% for k, v in details %}
+                <tr>
+                  <th class="bg-light text-secondary fw-semibold w-25 px-3 py-2 small">{{ k }}</th>
+                  <td class="px-3 py-2 fw-medium text-dark">
+                    {% if k == "Status" %}
+                      {% if v == "SUCCESS" or v == "ACTIVE" or v == "Transfer successful" %}
+                        <span class="badge-bnb-success">{{ v }}</span>
+                      {% elif v == "PENDING" %}
+                        <span class="badge-bnb-pending">{{ v }}</span>
+                      {% elif v == "FAILED" %}
+                        <span class="badge-bnb-failed">{{ v }}</span>
+                      {% else %}
+                        <span class="badge bg-secondary">{{ v }}</span>
+                      {% endif %}
+                    {% elif k == "Account" or k == "From" or k == "To" %}
+                      <span class="bnb-masked">{{ v }}</span>
+                    {% elif "₹" in v %}
+                      <span class="fw-bold text-primary">{{ v }}</span>
+                    {% else %}
+                      {{ v }}
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Primary Data Table (e.g. Accounts, Beneficiaries, Transactions) -->
+  {% if table %}
+    <div class="card border shadow-sm mb-4">
+      <div class="card-body p-0">
+        {% include "components/transaction_table.html" with tbl=table %}
+      </div>
+    </div>
+  {% elif empty_hint %}
+    <div class="text-center py-5 bg-white rounded border my-4 shadow-sm">
+      <img src="{% static 'images/illustrations/empty-transactions.jpg' %}" alt="Empty" style="max-height: 160px; width: auto;" class="mb-3 opacity-75">
+      <h5 class="fw-bold text-dark">No Records Found</h5>
+      <p class="text-muted small mb-0">{{ empty_hint }}</p>
+    </div>
+  {% endif %}
+
+  <!-- Secondary Table (e.g. Dashboard recent transactions) -->
+  {% if table2 %}
+    <div class="card border shadow-sm mt-4">
+      <div class="card-header bg-light py-2 px-3 fw-semibold text-secondary">
+        <i class="bi bi-clock-history me-1"></i> Recent Transactions
+      </div>
+      <div class="card-body p-0">
+        {% include "components/transaction_table.html" with tbl=table2 %}
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Pagination -->
+  {% if page_obj %}
+    {% include "components/pagination.html" %}
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#eef2f6" />
+    </linearGradient>
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+  </defs>
+
+  <!-- Background circle decoration -->
+  <circle cx="300" cy="225" r="160" fill="#e2e8f0" opacity="0.4" />
+  <circle cx="300" cy="225" r="120" fill="#ffffff" opacity="0.6" />
+
+  <!-- Payee directory card -->
+  <rect x="190" y="110" width="220" height="230" rx="16" fill="#ffffff" filter="url(#shadow)" stroke="#cbd5e1" stroke-width="2" />
+  
+  <!-- Header bar -->
+  <path d="M190 126 C190 117 197 110 206 110 L394 110 C403 110 410 117 410 126 L410 150 L190 150 Z" fill="url(#primaryGrad)" />
+  <circle cx="215" cy="130" r="5" fill="#f87171" />
+  <circle cx="230" cy="130" r="5" fill="#fbbf24" />
+  <circle cx="245" cy="130" r="5" fill="#34d399" />
+
+  <!-- Person avatar placeholder -->
+  <circle cx="300" cy="195" r="32" fill="#e0e7ff" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4 3" />
+  <!-- Person silhouette outline -->
+  <path d="M290 190 A10 10 0 1 0 310 190 A10 10 0 1 0 290 190" fill="#93c5fd" />
+  <path d="M280 216 C280 206 320 206 320 216 Z" fill="#93c5fd" />
+
+  <!-- Dotted lines for text -->
+  <rect x="235" y="245" width="130" height="8" rx="4" fill="#cbd5e1" />
+  <rect x="255" y="262" width="90" height="6" rx="3" fill="#e2e8f0" />
+  <rect x="245" y="276" width="110" height="6" rx="3" fill="#e2e8f0" />
+
+  <!-- Plus add symbol circle badge -->
+  <circle cx="365" cy="295" r="24" fill="url(#goldGrad)" filter="url(#shadow)" />
+  <path d="M365 285 L365 305 M355 295 L375 295" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" />
+
+  <!-- Sparkles -->
+  <path d="M165 170 L170 180 L180 185 L170 190 L165 200 L160 190 L150 185 L160 180 Z" fill="#fbbf24" opacity="0.8" />
+  <path d="M430 150 L433 158 L441 161 L433 164 L430 172 L427 164 L419 161 L427 158 Z" fill="#3b82f6" opacity="0.7" />
+  <path d="M420 310 L423 316 L429 318 L423 320 L420 326 L417 320 L411 318 L417 316 Z" fill="#f59e0b" opacity="0.6" />
+</svg>

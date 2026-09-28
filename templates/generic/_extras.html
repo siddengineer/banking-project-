@@ -1,0 +1,4 @@
+{% if details %}<dl>{% for k,v in details %}<dt><strong>{{ k }}</strong></dt><dd>{{ v }}</dd>{% endfor %}</dl>{% endif %}
+{% if banner %}<p><em>{{ banner }}</em></p>{% endif %}
+{% if empty_hint %}<p>{{ empty_hint }}</p>{% endif %}
+{% for a in post_actions %}<form method="post" action="{{ a.url }}" style="display:inline">{% csrf_token %}{% for k,v in a.fields.items %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endfor %}<button>{{ a.label }}</button></form> {% endfor %}

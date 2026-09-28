@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Profile &amp; KYC Verification | Bharat Nidhi Bank{% endblock %}
+
+{% block content %}
+<div class="bnb-page-container">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 pb-2 border-bottom">
+    <div>
+      <h2 class="h3 fw-bold text-dark mb-1">
+        <i class="bi bi-person-circle text-primary me-2"></i> Profile &amp; Security
+      </h2>
+      <p class="text-muted small mb-0">Customer information, KYC compliance status, and security credentials</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'users:change_password' %}" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-key me-1"></i> Change Password
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Left Column: User Summary Card -->
+    <div class="col-lg-4">
+      <div class="card border shadow-sm rounded-4 text-center p-4 bg-white mb-4">
+        <div class="mx-auto rounded-circle d-flex align-items-center justify-content-center text-white fw-bold display-6 mb-3 shadow" style="width: 80px; height: 80px; background: linear-gradient(135deg, #0B1B3D, #1A56DB);">
+          {{ user.first_name|default:user.username|slice:":1"|upper }}
+        </div>
+        <h4 class="h5 fw-bold text-dark mb-1">{{ customer.full_name|default:user.get_full_name|default:user.username }}</h4>
+        <span class="badge bg-primary-subtle text-primary border px-3 py-1 font-monospace mb-3">
+          CIF # {{ customer.customer_number|default:user.username }}
+        </span>
+
+        <div class="text-start border-top pt-3 small">
+          <div class="d-flex justify-content-between py-1">
+            <span class="text-muted">Username</span>
+            <span class="fw-semibold text-dark">{{ user.username }}</span>
+          </div>
+          <div class="d-flex justify-content-between py-1">
+            <span class="text-muted">Registered Email</span>
+            <span class="fw-semibold text-dark text-truncate ms-2">{{ user.email }}</span>
+          </div>
+          <div class="d-flex justify-content-between py-1">
+            <span class="text-muted">Mobile Number</span>
+            <span class="font-monospace fw-semibold text-dark">XXXXXX{{ user.mobile|slice:"-4:" }}</span>
+          </div>
+          {% if customer.date_of_birth %}
+            <div class="d-flex justify-content-between py-1">
+              <span class="text-muted">Date of Birth</span>
+              <span class="text-dark">{{ customer.date_of_birth|date:"d-m-Y" }}</span>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Quick Security Status -->
+      <div class="card border shadow-sm rounded-4 p-3 bg-light">
+        <h6 class="fw-bold text-dark small mb-2"><i class="bi bi-shield-check text-success me-1"></i> Security Overview</h6>
+        <div class="small text-muted mb-2">
+          Two-Factor Authentication: <strong class="text-success">Enabled (SMS OTP)</strong>
+        </div>
+        {% if security and security.last_password_change %}
+          <div class="small text-muted mb-3">
+            Last Password Change: <strong class="text-dark">{{ security.last_password_change|date:"d M Y" }}</strong>
+          </div>
+        {% endif %}
+        <a href="{% url 'users:change_password' %}" class="btn btn-sm btn-outline-secondary w-100">
+          Update Net-Banking Password
+        </a>
+      </div>
+    </div>
+
+    <!-- Right Column: KYC and Addresses -->
+    <div class="col-lg-8">
+      <!-- KYC Status Card -->
+      <div class="card border shadow-sm rounded-4 overflow-hidden mb-4">
+        <div class="card-header bg-white py-3 px-4 border-bottom d-flex justify-content-between align-items-center">
+          <h5 class="h6 fw-bold text-dark mb-0">
+            <i class="bi bi-patch-check-fill text-primary me-2"></i> KYC (Know Your Customer) Status
+          </h5>
+          {% if kyc and kyc.kyc_status == 'VERIFIED' %}
+            <span class="badge bg-success px-3 py-1">VERIFIED</span>
+          {% else %}
+            <span class="badge bg-warning text-dark px-3 py-1">{{ kyc.kyc_status|default:"PENDING" }}</span>
+          {% endif %}
+        </div>
+
+        <div class="card-body p-4">
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <div class="p-3 border rounded-3 bg-light">
+                <span class="text-muted small d-block">PAN Card Number</span>
+                <strong class="font-monospace text-dark fs-6">{{ kyc.masked_pan|default:"ABCDE****F" }}</strong>
+                <span class="badge bg-success-subtle text-success border border-success-subtle ms-2 small">Linked</span>
+              </div>
+            </div>
+
+            <div class="col-sm-6">
+              <div class="p-3 border rounded-3 bg-light">
+                <span class="text-muted small d-block">Aadhaar Identity Number</span>
+                <strong class="font-monospace text-dark fs-6">{{ kyc.masked_aadhaar|default:"********1234" }}</strong>
+                <span class="badge bg-success-subtle text-success border border-success-subtle ms-2 small">UIDAI Verified</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-success-subtle border border-success-subtle rounded-3 mt-3 mb-0 py-2 px-3 small d-flex align-items-center gap-2">
+            <i class="bi bi-check-circle-fill text-success fs-5"></i>
+            <div>
+              Your account KYC compliance is up to date in compliance with Reserve Bank of India Master Directions.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Address Records -->
+      <div class="card border shadow-sm rounded-4 overflow-hidden mb-4">
+        <div class="card-header bg-white py-3 px-4 border-bottom">
+          <h5 class="h6 fw-bold text-dark mb-0">
+            <i class="bi bi-geo-alt-fill text-primary me-2"></i> Registered Address Records
+          </h5>
+        </div>
+
+        <div class="card-body p-4">
+          {% if addresses %}
+            <div class="row g-3">
+              {% for a in addresses %}
+                <div class="col-md-6">
+                  <div class="p-3 border rounded-3 h-100 bg-white">
+                    <span class="badge bg-secondary-subtle text-secondary small mb-2">{{ a.get_address_type_display }}</span>
+                    <div class="fw-bold text-dark small">{{ a.line1 }}</div>
+                    {% if a.line2 %}<div class="text-secondary small">{{ a.line2 }}</div>{% endif %}
+                    <div class="text-muted small">{{ a.city }}, {{ a.state }} - {{ a.pincode }}</div>
+                    <div class="text-muted small">{{ a.country }}</div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-muted small mb-0">No address records on file. Contact your branch to update communication address.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

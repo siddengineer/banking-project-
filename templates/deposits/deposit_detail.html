@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Deposit Advice #{{ deposit.pk }} | Bharat Nidhi Bank{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 pb-2 border-bottom">
+      <div class="d-flex align-items-center gap-3">
+        <a href="{% url 'deposits:list' %}" class="btn btn-outline-secondary btn-sm rounded-circle p-2" title="Back to Deposits">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+          <h2 class="h4 fw-bold text-dark mb-0">Deposit Advice Certificate</h2>
+          <span class="text-muted small">Account #{{ deposit.pk }} &bull; {{ deposit.scheme.name }}</span>
+        </div>
+      </div>
+      <div>
+        <span class="badge {% if deposit.status == 'ACTIVE' %}bg-success-subtle text-success border border-success-subtle{% elif deposit.status == 'CLOSED' %}bg-danger-subtle text-danger border border-danger-subtle{% else %}bg-secondary{% endif %} px-3 py-2 fs-6">
+          {{ deposit.get_status_display|default:deposit.status }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Certificate Card -->
+    <div class="card border shadow-sm rounded-4 overflow-hidden mb-4 position-relative">
+      <div class="p-4 text-white" style="background: linear-gradient(135deg, #071228 0%, #0B1B3D 50%, #152A5A 100%);">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <img src="{% static 'images/brand/bnb-logo-white.png' %}" alt="BNB" height="32" onerror="this.src='{% static 'images/brand/bnb-logo.png' %}'">
+            <span class="fw-bold tracking-wider text-uppercase small text-warning">Bharat Nidhi Bank</span>
+          </div>
+          <span class="badge bg-warning text-dark font-monospace">TERM DEPOSIT ADVICE</span>
+        </div>
+
+        <div class="row g-3 my-2">
+          <div class="col-sm-6">
+            <span class="text-white-50 small text-uppercase letter-spacing-1 d-block">Principal Amount</span>
+            <div class="display-6 fw-bold text-white">₹{{ deposit.principal_amount|default:deposit.monthly_installment }}</div>
+          </div>
+          <div class="col-sm-6 text-sm-end">
+            <span class="text-white-50 small text-uppercase letter-spacing-1 d-block">Maturity Value</span>
+            <div class="display-6 fw-bold text-warning">₹{{ deposit.maturity_amount }}</div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center border-top border-white-50 pt-3 mt-3">
+          <div class="small">Interest Rate: <strong class="text-warning fs-6">{{ deposit.interest_rate }}% p.a.</strong></div>
+          <div class="small">Tenure: <strong class="text-white">{{ deposit.tenure_months }} Months</strong></div>
+        </div>
+      </div>
+
+      <div class="card-body p-4 bg-white">
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <div class="p-3 border rounded-3 bg-light">
+              <span class="text-muted small d-block">Deposit Opening Date</span>
+              <strong class="text-dark">{{ deposit.start_date|date:"d M Y" }}</strong>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <div class="p-3 border rounded-3 bg-light">
+              <span class="text-muted small d-block">Maturity Due Date</span>
+              <strong class="text-success">{{ deposit.maturity_date|date:"d M Y" }}</strong>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <div class="p-3 border rounded-3 bg-light">
+              <span class="text-muted small d-block">Linked Payout Account</span>
+              <strong class="font-monospace text-dark">{{ deposit.linked_account.masked_number }}</strong>
+              <div class="text-muted small">{{ deposit.linked_account.account_type.type_name }}</div>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <div class="p-3 border rounded-3 bg-light">
+              <span class="text-muted small d-block">Deposit Type</span>
+              <strong class="text-dark">{{ deposit.scheme.get_scheme_type_display|default:deposit.scheme.scheme_type }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center pt-4 mt-4 border-top flex-wrap gap-2">
+          <button type="button" class="btn btn-outline-secondary" onclick="window.print();">
+            <i class="bi bi-printer me-1"></i> Print Certificate
+          </button>
+
+          {% if deposit.status == 'ACTIVE' and deposit.scheme.scheme_type == 'FD' %}
+            <form method="post" action="{% url 'deposits:close' pk=deposit.pk %}" onsubmit="return confirm('Are you sure you want to close this Fixed Deposit prematurely? Applicable penal rate may apply.');">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-danger">
+                <i class="bi bi-x-circle me-1"></i> Close Deposit Prematurely
+              </button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

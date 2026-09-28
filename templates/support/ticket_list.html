@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Customer Support &amp; Helpdesk | Bharat Nidhi Bank{% endblock %}
+
+{% block content %}
+<div class="bnb-page-container">
+  <!-- Top Header -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 pb-2 border-bottom">
+    <div>
+      <h2 class="h3 fw-bold text-dark mb-1">
+        <i class="bi bi-headset text-primary me-2"></i> Support &amp; Helpdesk
+      </h2>
+      <p class="text-muted small mb-0">Track inquiries, raise grievances, and connect with customer care</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'support:new' %}" class="btn btn-bnb-primary btn-sm px-3 shadow-sm">
+        <i class="bi bi-pencil-square me-1"></i> Raise New Request
+      </a>
+      <a href="{% url 'core:contact' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-telephone me-1"></i> Contact Channels
+      </a>
+    </div>
+  </div>
+
+  <!-- 24x7 Support Help Banner -->
+  <div class="card border-0 rounded-4 shadow-sm text-white mb-4 overflow-hidden" style="background: linear-gradient(135deg, #071228 0%, #0B1B3D 50%, #1A56DB 100%);">
+    <div class="card-body p-4">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <span class="badge bg-warning text-dark font-monospace mb-2 px-3 py-1">24x7 DEDICATED HELPLINE</span>
+          <h3 class="h4 fw-bold mb-2">We Are Here To Assist You</h3>
+          <p class="text-white-50 mb-3 small">
+            For urgent security concerns such as unauthorized debits or lost cards, call our toll-free customer care instantly or log a high-priority ticket below.
+          </p>
+          <div class="d-flex flex-wrap gap-3">
+            <div class="bg-white-10 border border-white-50 rounded-3 px-3 py-2">
+              <span class="text-white-50 small d-block">Toll-Free Helpline</span>
+              <strong class="text-warning fs-5">1800 11 2211</strong>
+            </div>
+            <div class="bg-white-10 border border-white-50 rounded-3 px-3 py-2">
+              <span class="text-white-50 small d-block">Official Email Support</span>
+              <strong class="text-white fs-6">support@bharatnidhibank.in</strong>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+          <img src="{% static 'images/illustrations/customer-support.jpg' %}" alt="Support Desk" class="rounded-circle border border-3 border-white shadow" style="width: 120px; height: 120px; object-fit: cover;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tickets Table -->
+  <div class="card border shadow-sm rounded-4 overflow-hidden mb-4">
+    <div class="card-header bg-white py-3 px-4 border-bottom d-flex justify-content-between align-items-center">
+      <h5 class="h6 fw-bold text-dark mb-0">
+        <i class="bi bi-ticket-perforated text-primary me-2"></i> My Service Requests
+      </h5>
+      <span class="badge bg-light text-secondary border">{{ tickets|length }} Tickets</span>
+    </div>
+
+    {% if tickets %}
+      <div class="table-responsive">
+        <table class="bnb-table table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Ticket #</th>
+              <th>Category</th>
+              <th>Subject</th>
+              <th>Status</th>
+              <th>Created Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in tickets %}
+              <tr>
+                <td class="font-monospace fw-bold text-primary">{{ t.ticket_number }}</td>
+                <td><span class="badge bg-light text-secondary border">{{ t.get_category_display }}</span></td>
+                <td class="fw-semibold text-dark">{{ t.subject }}</td>
+                <td>
+                  <span class="badge {% if t.status == 'RESOLVED' or t.status == 'CLOSED' %}bg-success{% elif t.status == 'IN_PROGRESS' %}bg-warning text-dark{% else %}bg-primary{% endif %}">
+                    {{ t.get_status_display }}
+                  </span>
+                </td>
+                <td class="text-muted small">{{ t.created_at|date:"d-m-Y H:i" }}</td>
+                <td>
+                  <a href="{% url 'support:detail' ticket=t.ticket_number %}" class="btn btn-outline-primary btn-sm">
+                    View Thread
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="text-center py-5 bg-white">
+        <i class="bi bi-chat-left-dots text-muted fs-1 mb-2 d-block opacity-50"></i>
+        <h6 class="fw-bold text-dark">No Service Requests Found</h6>
+        <p class="text-muted small mb-3">You don't have any open inquiries or grievance tickets.</p>
+        <a href="{% url 'support:new' %}" class="btn btn-bnb-primary btn-sm px-4">
+          <i class="bi bi-pencil-square me-1"></i> Submit a Request
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

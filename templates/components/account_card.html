@@ -1,0 +1,25 @@
+{% load static %}
+<div class="bnb-account-card">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <span class="bnb-account-type">{{ account.account_type.type_name }} Account</span>
+    <span class="badge {% if account.status == 'ACTIVE' %}bg-success{% elif account.status == 'FROZEN' %}bg-danger{% else %}bg-secondary{% endif %} text-white">
+      {{ account.status }}
+    </span>
+  </div>
+  
+  <div class="bnb-account-balance">
+    <span class="fs-4 text-warning">₹</span> {{ account.balance }}
+  </div>
+
+  <div class="d-flex justify-content-between align-items-end mt-3">
+    <div>
+      <div class="text-white-50 small mb-1">Account Number</div>
+      <div class="bnb-account-num">{{ account.masked_number }}</div>
+    </div>
+    <div>
+      <a href="/accounts/{{ account.account_number }}/" class="btn btn-sm btn-outline-light rounded-pill px-3">
+        Details <i class="bi bi-arrow-right-short"></i>
+      </a>
+    </div>
+  </div>
+</div>

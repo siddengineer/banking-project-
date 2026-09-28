@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Fixed &amp; Recurring Deposits | Bharat Nidhi Bank{% endblock %}
+
+{% block content %}
+<div class="bnb-page-container">
+  <!-- Top Header -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 pb-2 border-bottom">
+    <div>
+      <h2 class="h3 fw-bold text-dark mb-1">
+        <i class="bi bi-safe2-fill text-primary me-2"></i> Term Deposits (FD &amp; RD)
+      </h2>
+      <p class="text-muted small mb-0">Guaranteed sovereign-grade returns with high liquidity and premature withdrawal options</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'deposits:open' %}" class="btn btn-bnb-primary btn-sm px-3 shadow-sm">
+        <i class="bi bi-plus-circle me-1"></i> Open New Deposit
+      </a>
+      <a href="{% url 'core:deposits_info' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-percent me-1"></i> Interest Rate Card
+      </a>
+    </div>
+  </div>
+
+  <!-- Deposit Rates Highlight Banner -->
+  <div class="card border-0 rounded-4 shadow-sm text-white mb-4 overflow-hidden" style="background: linear-gradient(135deg, #071228 0%, #0B1B3D 50%, #152A5A 100%);">
+    <div class="card-body p-4">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <span class="badge bg-warning text-dark font-monospace mb-2 px-3 py-1">SPECIAL TENURE SCHEMES</span>
+          <h3 class="h4 fw-bold mb-2">Bharat Nidhi Samriddhi Deposit</h3>
+          <p class="text-white-50 mb-3 small">
+            Lock in up to <strong>7.60% p.a.</strong> interest with quarterly compounding on 400-day fixed deposits. Additional <strong>0.50%</strong> concession for Senior Citizens.
+          </p>
+          <div class="d-flex flex-wrap gap-3">
+            <div class="bg-white-10 border border-white-50 rounded-3 px-3 py-2">
+              <span class="text-white-50 small d-block">1 Year - 2 Years</span>
+              <strong class="text-warning fs-5">7.10% p.a.</strong>
+            </div>
+            <div class="bg-white-10 border border-white-50 rounded-3 px-3 py-2">
+              <span class="text-white-50 small d-block">400 Days Special</span>
+              <strong class="text-warning fs-5">7.60% p.a.</strong>
+            </div>
+            <div class="bg-white-10 border border-white-50 rounded-3 px-3 py-2">
+              <span class="text-white-50 small d-block">5 Years (Tax Saver 80C)</span>
+              <strong class="text-warning fs-5">7.25% p.a.</strong>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+          <img src="{% static 'images/products/fixed-deposit.jpg' %}" alt="Fixed Deposit" class="rounded-3 shadow" style="max-height: 140px; width: auto; object-fit: cover;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- My Existing Deposits Table -->
+  <div class="card border shadow-sm rounded-4 overflow-hidden mb-4">
+    <div class="card-header bg-white py-3 px-4 border-bottom d-flex justify-content-between align-items-center">
+      <h5 class="h6 fw-bold text-dark mb-0">
+        <i class="bi bi-wallet text-primary me-2"></i> My Active &amp; Matured Deposits
+      </h5>
+      <span class="badge bg-light text-secondary border">{{ deposits|length }} Deposits</span>
+    </div>
+
+    {% if deposits %}
+      <div class="table-responsive">
+        <table class="bnb-table table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Deposit Scheme</th>
+              <th>Deposit Amount</th>
+              <th>Interest Rate</th>
+              <th>Maturity Date</th>
+              <th>Est. Maturity Value</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for d in deposits %}
+              <tr>
+                <td>
+                  <span class="fw-bold text-dark d-block">{{ d.scheme.name }}</span>
+                  <small class="text-muted font-monospace">Acc #{{ d.pk }} &bull; {{ d.scheme.scheme_type }}</small>
+                </td>
+                <td class="fw-bold text-dark">₹{{ d.principal_amount|default:d.monthly_installment }}</td>
+                <td><span class="badge bg-primary-subtle text-primary border">{{ d.interest_rate }}%</span></td>
+                <td>{{ d.maturity_date|date:"d-m-Y" }}</td>
+                <td class="fw-bold text-success fs-6">₹{{ d.maturity_amount }}</td>
+                <td>
+                  <span class="badge {% if d.status == 'ACTIVE' %}bg-success{% elif d.status == 'MATURED' %}bg-info text-dark{% else %}bg-secondary{% endif %}">
+                    {{ d.get_status_display|default:d.status }}
+                  </span>
+                </td>
+                <td>
+                  <a href="{% url 'deposits:detail' pk=d.pk %}" class="btn btn-outline-primary btn-sm">
+                    View Advice
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="text-center py-5 bg-white">
+        <i class="bi bi-safe text-muted fs-1 mb-2 d-block opacity-50"></i>
+        <h6 class="fw-bold text-dark">No Term Deposits Found</h6>
+        <p class="text-muted small mb-3">You do not have any active Fixed or Recurring Deposits.</p>
+        <a href="{% url 'deposits:open' %}" class="btn btn-bnb-primary btn-sm px-4">
+          <i class="bi bi-plus-circle me-1"></i> Open an FD or RD Now
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | Bharat Nidhi Bank{% endblock %}
+
+{% block content %}
+<div class="row g-4 align-items-center mb-5">
+  <div class="col-lg-6">
+    <span class="badge bg-primary-subtle text-primary border px-3 py-1 mb-2 fw-bold text-uppercase">
+      {{ category|default:"Bharat Nidhi Bank Services" }}
+    </span>
+    <h1 class="display-6 fw-bold text-dark mb-3">{{ title }}</h1>
+    <p class="lead text-secondary mb-4">{{ subtitle }}</p>
+    <div class="d-flex gap-3 flex-wrap">
+      {% if cta_url %}
+        <a href="{{ cta_url }}" class="btn btn-bnb-primary px-4 py-2">{{ cta_text|default:"Get Started" }} &rarr;</a>
+      {% endif %}
+      <a href="/support/" class="btn btn-outline-secondary px-4 py-2">Contact Branch</a>
+    </div>
+  </div>
+  {% if image_url %}
+  <div class="col-lg-6 text-center">
+    <img src="{% static image_url %}" alt="{{ title }}" class="img-fluid rounded-4 shadow-sm border" style="max-height: 380px; object-fit: cover; width: 100%;">
+  </div>
+  {% endif %}
+</div>
+
+<!-- Features Section -->
+{% if features %}
+<div class="row g-4 mb-5">
+  {% for f in features %}
+    <div class="col-md-4">
+      <div class="card h-100 border p-3 shadow-sm rounded-3">
+        <div class="fs-2 text-primary mb-2"><i class="bi {{ f.icon|default:'bi-check-circle-fill' }}"></i></div>
+        <h5 class="fw-bold text-dark mb-2">{{ f.title }}</h5>
+        <p class="text-muted small mb-0">{{ f.description }}</p>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Details / Content list -->
+{% if content_sections %}
+<div class="card border shadow-sm p-4 mb-5">
+  {% for sec in content_sections %}
+    <div class="mb-4 {% if not forloop.last %}pb-4 border-bottom{% endif %}">
+      <h4 class="fw-bold text-dark mb-2">{{ sec.heading }}</h4>
+      <p class="text-secondary">{{ sec.body }}</p>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if items %}
+<div class="list-group shadow-sm mb-5">
+  {% for item in items %}
+    <div class="list-group-item p-3">
+      <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+        <h6 class="mb-1 fw-bold text-primary">{{ item.title }}</h6>
+        {% if item.date %}
+          <small class="text-muted">{{ item.date }}</small>
+        {% endif %}
+      </div>
+      <p class="mb-1 text-secondary small">{{ item.body|default:item.description }}</p>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Bank Accounts | Bharat Nidhi Bank{% endblock %}
+
+{% block content %}
+<div class="bnb-page-container">
+  <!-- Top Header -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 pb-2 border-bottom">
+    <div>
+      <h2 class="h3 fw-bold text-dark mb-1">
+        <i class="bi bi-wallet2 text-primary me-2"></i> My Accounts
+      </h2>
+      <p class="text-muted small mb-0">Overview of your Savings, Current, and Special bank accounts</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'transactions:transfer_new' %}" class="btn btn-bnb-primary btn-sm px-3 shadow-sm">
+        <i class="bi bi-send me-1"></i> Quick Transfer
+      </a>
+      <a href="{% url 'transactions:statement' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-file-earmark-text me-1"></i> Account Statement
+      </a>
+    </div>
+  </div>
+
+  <!-- Accounts Cards Grid -->
+  {% if accounts %}
+    <div class="row g-4">
+      {% for a in accounts %}
+        <div class="col-lg-6 col-xl-4">
+          <div class="card h-100 border shadow-sm rounded-4 overflow-hidden position-relative">
+            <!-- Account Gradient Top -->
+            <div class="bnb-account-card p-4">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="bnb-account-type">{{ a.account_type.type_name }}</span>
+                <span class="badge {% if a.status == 'ACTIVE' %}bg-success{% else %}bg-secondary{% endif %} rounded-pill px-3">
+                  {{ a.get_status_display|default:a.status }}
+                </span>
+              </div>
+              <div class="bnb-account-balance">₹{{ a.balance }}</div>
+              <div class="d-flex justify-content-between align-items-center mt-3">
+                <div class="bnb-account-num">{{ a.masked_number }}</div>
+                <small class="text-white-50">{{ a.branch.branch_name }}</small>
+              </div>
+            </div>
+
+            <!-- Details Body -->
+            <div class="card-body p-3 bg-white">
+              <div class="d-flex justify-content-between align-items-center small py-1 border-bottom">
+                <span class="text-muted">Available to Spend</span>
+                <span class="fw-bold text-success">₹{{ a.available_balance }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center small py-1 border-bottom">
+                <span class="text-muted">Branch IFSC Code</span>
+                <span class="font-monospace fw-semibold text-secondary">{{ a.branch.ifsc_code }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center small py-1">
+                <span class="text-muted">Date Opened</span>
+                <span class="text-muted">{{ a.opened_at|date:"d-m-Y" }}</span>
+              </div>
+            </div>
+
+            <!-- Card Actions -->
+            <div class="card-footer bg-light p-3 border-top d-flex gap-2">
+              <a href="{% url 'accounts:detail' account_number=a.account_number %}" class="btn btn-bnb-primary btn-sm flex-grow-1">
+                <i class="bi bi-eye me-1"></i> View Passbook &amp; Details
+              </a>
+              <a href="{% url 'transactions:transfer_new' %}" class="btn btn-outline-primary btn-sm" title="Transfer from this account">
+                <i class="bi bi-arrow-left-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="text-center py-5 bg-white rounded-4 border shadow-sm my-4">
+      <img src="{% static 'images/illustrations/empty-transactions.jpg' %}" alt="No Accounts" style="max-height: 180px; width: auto;" class="mb-3 opacity-75">
+      <h5 class="fw-bold text-dark">No Accounts Found</h5>
+      <p class="text-muted small mb-0">Please contact your branch to open or link an account.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

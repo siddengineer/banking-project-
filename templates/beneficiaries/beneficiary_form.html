@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | Bharat Nidhi Bank{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <!-- Header -->
+    <div class="d-flex align-items-center gap-3 mb-4 pb-2 border-bottom">
+      <a href="{% url 'beneficiaries:list' %}" class="btn btn-outline-secondary btn-sm rounded-circle p-2" title="Back to Beneficiaries">
+        <i class="bi bi-arrow-left"></i>
+      </a>
+      <div>
+        <h2 class="h4 fw-bold text-dark mb-0">{{ title }}</h2>
+        <span class="text-muted small">Register payee details for IMPS, NEFT, RTGS or internal transfer</span>
+      </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card border shadow-sm rounded-4 overflow-hidden mb-4">
+      <div class="card-header bg-white py-3 px-4 border-bottom">
+        <h5 class="h6 fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+          <i class="bi bi-person-badge-fill text-primary"></i> Payee Bank Information
+        </h5>
+      </div>
+
+      <div class="card-body p-4">
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger py-2 px-3 small mb-4">
+            {% for error in form.non_field_errors %}
+              <div><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+
+          {% if form.beneficiary_type %}
+            <!-- Beneficiary Type Radio / Selector -->
+            <div class="mb-4">
+              <label class="form-label fw-bold text-dark">
+                Beneficiary Bank Category <span class="text-danger">*</span>
+              </label>
+              <div class="row g-2">
+                {% for val, label in form.fields.beneficiary_type.choices %}
+                  <div class="col-sm-6">
+                    <label class="card p-3 border rounded-3 text-center cursor-pointer bnb-ben-type-card {% if form.beneficiary_type.value == val or forloop.first and not form.beneficiary_type.value %}border-primary bg-primary-subtle{% endif %}">
+                      <input type="radio" name="beneficiary_type" value="{{ val }}" class="d-none bnb-type-input" {% if form.beneficiary_type.value == val or forloop.first and not form.beneficiary_type.value %}checked{% endif %}>
+                      <div class="fs-4 text-primary mb-1">
+                        {% if val == 'INTERNAL' %}<i class="bi bi-building"></i>{% else %}<i class="bi bi-bank"></i>{% endif %}
+                      </div>
+                      <div class="fw-bold small text-dark">{{ label }}</div>
+                    </label>
+                  </div>
+                {% endfor %}
+              </div>
+              {% if form.beneficiary_type.errors %}
+                <div class="text-danger small mt-1">{{ form.beneficiary_type.errors.0 }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+
+          <div class="row g-3">
+            <!-- Beneficiary Name -->
+            <div class="col-md-6">
+              <label for="id_beneficiary_name" class="form-label fw-bold text-dark">
+                Full Name (as per bank records) <span class="text-danger">*</span>
+              </label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                <input type="text" name="beneficiary_name" id="id_beneficiary_name" class="form-control" placeholder="e.g. Priya Sharma" value="{{ form.beneficiary_name.value|default:'' }}" required>
+              </div>
+              {% if form.beneficiary_name.errors %}
+                <div class="text-danger small mt-1">{{ form.beneficiary_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Nickname -->
+            <div class="col-md-6">
+              <label for="id_nickname" class="form-label fw-bold text-dark">
+                Nickname / Alias (Optional)
+              </label>
+              <input type="text" name="nickname" id="id_nickname" class="form-control" placeholder="e.g. Sister, Landlord" value="{{ form.nickname.value|default:'' }}">
+              {% if form.nickname.errors %}
+                <div class="text-danger small mt-1">{{ form.nickname.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            {% if form.bank_name %}
+              <!-- Bank Name -->
+              <div class="col-md-6">
+                <label for="id_bank_name" class="form-label fw-bold text-dark">
+                  Bank Name <span class="text-danger">*</span>
+                </label>
+                <input type="text" name="bank_name" id="id_bank_name" class="form-control" placeholder="e.g. Bharat Nidhi Bank / State Bank of India" value="{{ form.bank_name.value|default:'' }}" required>
+                {% if form.bank_name.errors %}
+                  <div class="text-danger small mt-1">{{ form.bank_name.errors.0 }}</div>
+                {% endif %}
+              </div>
+            {% endif %}
+
+            {% if form.ifsc_code %}
+              <!-- IFSC Code -->
+              <div class="col-md-6">
+                <label for="id_ifsc_code" class="form-label fw-bold text-dark">
+                  IFSC Code <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light font-monospace"><i class="bi bi-geo-alt"></i></span>
+                  <input type="text" name="ifsc_code" id="id_ifsc_code" class="form-control font-monospace text-uppercase" placeholder="e.g. BNBI0001001" value="{{ form.ifsc_code.value|default:'' }}" maxlength="11" required>
+                </div>
+                <div class="form-text small text-muted">
+                  BNB Branches: <code>BNBI0001001</code> (New Delhi), <code>BNBI0002001</code> (Mumbai)
+                </div>
+                {% if form.ifsc_code.errors %}
+                  <div class="text-danger small mt-1">{{ form.ifsc_code.errors.0 }}</div>
+                {% endif %}
+              </div>
+            {% endif %}
+
+            {% if form.account_number %}
+              <!-- Account Number -->
+              <div class="col-md-12">
+                <label for="id_account_number" class="form-label fw-bold text-dark">
+                  Account Number <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light"><i class="bi bi-wallet2"></i></span>
+                  <input type="text" name="account_number" id="id_account_number" class="form-control font-monospace" placeholder="11 to 16 digit account number" value="{{ form.account_number.value|default:'' }}" required>
+                </div>
+                {% if form.account_number.errors %}
+                  <div class="text-danger small mt-1">{{ form.account_number.errors.0 }}</div>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Buttons -->
+          <div class="d-flex justify-content-between align-items-center pt-4 mt-4 border-top">
+            <a href="{% url 'beneficiaries:list' %}" class="btn btn-outline-secondary">
+              Cancel
+            </a>
+            <button type="submit" class="btn btn-bnb-primary px-4 shadow">
+              <i class="bi bi-check2-circle me-1"></i> Save Beneficiary
+            </button>
+          </div>
+        </form>
+
+        {% if post_actions %}
+          <div class="pt-4 mt-4 border-top">
+            <h6 class="text-danger fw-bold small text-uppercase">Danger Zone</h6>
+            {% for a in post_actions %}
+              <form method="post" action="{{ a.url }}" onsubmit="return confirm('Are you sure you want to disable this beneficiary?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger btn-sm">
+                  <i class="bi bi-person-x me-1"></i> {{ a.label }}
+                </button>
+              </form>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const cards = document.querySelectorAll('.bnb-ben-type-card');
+  const bankNameInput = document.getElementById('id_bank_name');
+  const ifscInput = document.getElementById('id_ifsc_code');
+
+  cards.forEach(card => {
+    card.addEventListener('click', function() {
+      cards.forEach(c => c.classList.remove('border-primary', 'bg-primary-subtle'));
+      this.classList.add('border-primary', 'bg-primary-subtle');
+      const radio = this.querySelector('input');
+      if (radio) {
+        radio.checked = true;
+        if (radio.value === 'INTERNAL' && bankNameInput && !bankNameInput.value) {
+          bankNameInput.value = 'Bharat Nidhi Bank';
+        }
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

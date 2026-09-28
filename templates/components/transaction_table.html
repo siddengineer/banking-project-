@@ -1,0 +1,92 @@
+{% load static %}
+{% if transactions or tbl.rows %}
+<div class="bnb-table-responsive">
+  <table class="bnb-table table table-hover align-middle mb-0">
+    <thead>
+      <tr>
+        {% if tbl.headers %}
+          {% for h in tbl.headers %}
+            <th>{{ h }}</th>
+          {% endfor %}
+        {% else %}
+          <th>Date</th>
+          <th>Reference</th>
+          <th>Description</th>
+          <th>Type</th>
+          <th>Amount</th>
+          <th>Balance</th>
+          <th>Status</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% if tbl.rows %}
+        {% for row in tbl.rows %}
+          <tr>
+            {% for cell in row %}
+              <td>
+                {% if cell.url %}
+                  <a href="{{ cell.url }}" class="fw-semibold text-primary text-decoration-none">{{ cell.text }}</a>
+                {% elif cell == 'SUCCESS' or cell == 'PAID' or cell == 'ACTIVE' or cell == 'VERIFIED' %}
+                  <span class="badge-bnb-success">{{ cell }}</span>
+                {% elif cell == 'PENDING' or cell == 'SUBMITTED' or cell == 'UNDER_REVIEW' or cell == 'IN_PROGRESS' %}
+                  <span class="badge-bnb-pending">{{ cell }}</span>
+                {% elif cell == 'FAILED' or cell == 'REJECTED' or cell == 'BLOCKED' or cell == 'CLOSED' %}
+                  <span class="badge-bnb-failed">{{ cell }}</span>
+                {% elif cell == 'REVERSED' or cell == 'DISABLED' or cell == 'TEMPORARILY_DISABLED' %}
+                  <span class="badge-bnb-reversed">{{ cell }}</span>
+                {% elif cell == 'DEBIT' %}
+                  <span class="text-danger fw-bold"><i class="bi bi-arrow-up-right me-1"></i>DR</span>
+                {% elif cell == 'CREDIT' %}
+                  <span class="text-success fw-bold"><i class="bi bi-arrow-down-left me-1"></i>CR</span>
+                {% else %}
+                  {{ cell }}
+                {% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      {% else %}
+        {% for t in transactions %}
+          <tr>
+            <td>{{ t.created_at|date:"d-m-Y H:i" }}</td>
+            <td class="font-monospace fw-semibold">{{ t.transfer.reference_number }}</td>
+            <td>{{ t.transfer.remarks|default:t.transfer.get_transfer_type_display }}</td>
+            <td>
+              {% if t.entry_type == 'DEBIT' %}
+                <span class="text-danger fw-bold"><i class="bi bi-arrow-up-right me-1"></i>DR</span>
+              {% else %}
+                <span class="text-success fw-bold"><i class="bi bi-arrow-down-left me-1"></i>CR</span>
+              {% endif %}
+            </td>
+            <td class="fw-bold {% if t.entry_type == 'DEBIT' %}text-danger{% else %}text-success{% endif %}">
+              ₹{{ t.amount }}
+            </td>
+            <td class="fw-semibold">₹{{ t.balance_after }}</td>
+            <td>
+              {% if t.status == 'SUCCESS' %}
+                <span class="badge-bnb-success">SUCCESS</span>
+              {% elif t.status == 'PENDING' %}
+                <span class="badge-bnb-pending">PENDING</span>
+              {% elif t.status == 'FAILED' %}
+                <span class="badge-bnb-failed">FAILED</span>
+              {% else %}
+                <span class="badge-bnb-reversed">{{ t.status }}</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+  <div class="text-center py-5 bg-white rounded border my-3">
+    <img src="{% static 'images/illustrations/empty-transactions.jpg' %}" alt="No transactions" style="max-height: 180px; width: auto;" class="mb-3 opacity-75">
+    <h5 class="fw-bold text-dark">No Transactions Found</h5>
+    <p class="text-muted small mb-3">No transaction activity recorded for this period or selection.</p>
+    <a href="/transfers/new/" class="btn btn-bnb-primary btn-sm px-3">
+      <i class="bi bi-send me-1"></i> Make a Transfer
+    </a>
+  </div>
+{% endif %}

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Open Fixed / Recurring Deposit | Bharat Nidhi Bank{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <!-- Header -->
+    <div class="d-flex align-items-center gap-3 mb-4 pb-2 border-bottom">
+      <a href="{% url 'deposits:list' %}" class="btn btn-outline-secondary btn-sm rounded-circle p-2" title="Back to Deposits">
+        <i class="bi bi-arrow-left"></i>
+      </a>
+      <div>
+        <h2 class="h4 fw-bold text-dark mb-0">Open Term Deposit</h2>
+        <span class="text-muted small">Open a Fixed Deposit (FD) or Recurring Deposit (RD) linked to your savings account</span>
+      </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card border shadow-sm rounded-4 overflow-hidden mb-4">
+      <div class="card-header bg-white py-3 px-4 border-bottom">
+        <h5 class="h6 fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+          <i class="bi bi-safe-fill text-primary"></i> Deposit Parameters
+        </h5>
+      </div>
+
+      <div class="card-body p-4">
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger py-2 px-3 small mb-4">
+            {% for error in form.non_field_errors %}
+              <div><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'deposits:open' %}" novalidate id="depositForm">
+          {% csrf_token %}
+
+          <!-- Scheme Selection -->
+          <div class="mb-4">
+            <label for="id_scheme" class="form-label fw-bold text-dark">
+              Deposit Scheme <span class="text-danger">*</span>
+            </label>
+            <select name="scheme" id="id_scheme" class="form-select" required>
+              <option value="">-- Choose Deposit Product --</option>
+              {% for s in form.fields.scheme.queryset %}
+                <option value="{{ s.pk }}" data-type="{{ s.scheme_type }}" data-rate="{{ s.interest_rate }}" data-min-amt="{{ s.min_amount }}" data-min-ten="{{ s.min_tenure_months }}" data-max-ten="{{ s.max_tenure_months }}" {% if form.scheme.value|stringformat:"s" == s.pk|stringformat:"s" %}selected{% endif %}>
+                  {{ s.name }} ({{ s.interest_rate }}% p.a. &bull; {{ s.scheme_type }})
+                </option>
+              {% endfor %}
+            </select>
+            {% if form.scheme.errors %}
+              <div class="text-danger small mt-1">{{ form.scheme.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Linked Debit Account -->
+          <div class="mb-4">
+            <label for="id_linked_account" class="form-label fw-bold text-dark">
+              Debit Funding Account <span class="text-danger">*</span>
+            </label>
+            <select name="linked_account" id="id_linked_account" class="form-select" required>
+              <option value="">-- Select Source Account --</option>
+              {% for acc in form.fields.linked_account.queryset %}
+                <option value="{{ acc.pk }}" {% if form.linked_account.value|stringformat:"s" == acc.pk|stringformat:"s" %}selected{% endif %}>
+                  {{ acc.account_type.type_name }} - {{ acc.masked_number }} (Balance: ₹{{ acc.available_balance }})
+                </option>
+              {% endfor %}
+            </select>
+            <div class="form-text small text-muted">
+              Funds will be immediately debited upon opening
+            </div>
+            {% if form.linked_account.errors %}
+              <div class="text-danger small mt-1">{{ form.linked_account.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <div class="row g-3">
+            <!-- Amount -->
+            <div class="col-md-6">
+              <label for="id_amount" class="form-label fw-bold text-dark">
+                Deposit Principal (₹) <span class="text-danger">*</span>
+              </label>
+              <div class="input-group">
+                <span class="input-group-text bg-light fw-bold">₹</span>
+                <input type="number" step="100" min="100" name="amount" id="id_amount" class="form-control fw-bold" placeholder="10000" value="{{ form.amount.value|default:'10000' }}" required>
+              </div>
+              <div class="form-text small text-muted" id="depositAmtHelp">
+                Minimum principal varies by scheme
+              </div>
+              {% if form.amount.errors %}
+                <div class="text-danger small mt-1">{{ form.amount.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Tenure Months -->
+            <div class="col-md-6">
+              <label for="id_tenure_months" class="form-label fw-bold text-dark">
+                Tenure (in Months) <span class="text-danger">*</span>
+              </label>
+              <div class="input-group">
+                <input type="number" min="1" max="120" name="tenure_months" id="id_tenure_months" class="form-control" placeholder="12" value="{{ form.tenure_months.value|default:'12' }}" required>
+                <span class="input-group-text bg-light text-muted">Months</span>
+              </div>
+              <div class="form-text small text-muted" id="depositTenureHelp">
+                e.g. 12 (1 yr), 24 (2 yrs), 60 (5 yrs)
+              </div>
+              {% if form.tenure_months.errors %}
+                <div class="text-danger small mt-1">{{ form.tenure_months.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Buttons -->
+          <div class="d-flex justify-content-between align-items-center pt-4 mt-4 border-top flex-wrap gap-2">
+            <a href="{% url 'deposits:list' %}" class="btn btn-outline-secondary">
+              Cancel
+            </a>
+            <div class="d-flex gap-2">
+              <button type="submit" name="preview" value="preview" class="btn btn-outline-primary">
+                <i class="bi bi-calculator me-1"></i> Preview Maturity
+              </button>
+              <button type="submit" class="btn btn-bnb-primary px-4 shadow">
+                <i class="bi bi-check2-circle me-1"></i> Open Deposit Now
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% load static %}
+<div class="bnb-sidebar" id="bnbSidebar">
+  <!-- Brand logo header -->
+  <div class="bnb-sidebar-brand">
+    <a href="/dashboard/" class="d-flex align-items-center text-decoration-none">
+      <img src="{% static 'images/brand/bnb-logo-white.png' %}" alt="Bharat Nidhi Bank" class="bnb-sidebar-logo me-2">
+    </a>
+  </div>
+
+  <!-- Customer profile chip -->
+  {% if user.is_authenticated and user.customerprofile %}
+  <div class="px-3 py-2 mx-3 my-2 rounded bg-white bg-opacity-10 border border-white border-opacity-10">
+    <div class="d-flex align-items-center gap-2">
+      <div class="rounded-circle bg-warning text-dark fw-bold d-flex align-items-center justify-content-center" style="width: 34px; height: 34px; font-size: 0.85rem;">
+        {{ user.customerprofile.full_name|slice:":1"|upper }}
+      </div>
+      <div class="overflow-hidden">
+        <div class="fw-semibold text-truncate text-white small">{{ user.customerprofile.full_name }}</div>
+        <div class="text-white-50 text-truncate" style="font-size: 0.72rem;">CIF: {{ user.customerprofile.customer_number }}</div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Sidebar Nav items -->
+  <div class="bnb-sidebar-nav">
+    <div class="bnb-sidebar-heading">Core Banking</div>
+    
+    <a href="/dashboard/" class="bnb-sidebar-link {% if request.path == '/dashboard/' %}active{% endif %}">
+      <i class="bi bi-speedometer2"></i>
+      <span>Dashboard</span>
+    </a>
+    
+    <a href="/accounts/" class="bnb-sidebar-link {% if '/accounts/' in request.path %}active{% endif %}">
+      <i class="bi bi-wallet2"></i>
+      <span>Accounts</span>
+    </a>
+
+    <a href="/transfers/new/" class="bnb-sidebar-link {% if '/transfers/' in request.path %}active{% endif %}">
+      <i class="bi bi-arrow-left-right"></i>
+      <span>Transfer Money</span>
+    </a>
+
+    <a href="/beneficiaries/" class="bnb-sidebar-link {% if '/beneficiaries/' in request.path %}active{% endif %}">
+      <i class="bi bi-person-lines-fill"></i>
+      <span>Beneficiaries</span>
+    </a>
+
+    <a href="/transactions/" class="bnb-sidebar-link {% if '/transactions/' in request.path %}active{% endif %}">
+      <i class="bi bi-clock-history"></i>
+      <span>Transactions</span>
+    </a>
+
+    <div class="bnb-sidebar-heading">Products & Services</div>
+
+    <a href="/cards/" class="bnb-sidebar-link {% if '/cards/' in request.path %}active{% endif %}">
+      <i class="bi bi-credit-card-2-front"></i>
+      <span>Cards</span>
+    </a>
+
+    <a href="/deposits/" class="bnb-sidebar-link {% if '/deposits/' in request.path %}active{% endif %}">
+      <i class="bi bi-piggy-bank"></i>
+      <span>Deposits (FD/RD)</span>
+    </a>
+
+    <a href="/loans/" class="bnb-sidebar-link {% if '/loans/' in request.path %}active{% endif %}">
+      <i class="bi bi-cash-coin"></i>
+      <span>Loans</span>
+    </a>
+
+    <a href="/statements/" class="bnb-sidebar-link {% if '/statements/' in request.path %}active{% endif %}">
+      <i class="bi bi-file-earmark-spreadsheet"></i>
+      <span>Statements</span>
+    </a>
+
+    <div class="bnb-sidebar-heading">Account & Help</div>
+
+    <a href="/notifications/" class="bnb-sidebar-link {% if '/notifications/' in request.path %}active{% endif %}">
+      <i class="bi bi-bell"></i>
+      <span>Notifications</span>
+    </a>
+
+    <a href="/support/" class="bnb-sidebar-link {% if '/support/' in request.path %}active{% endif %}">
+      <i class="bi bi-headset"></i>
+      <span>Support Requests</span>
+    </a>
+
+    <a href="/auth/profile/" class="bnb-sidebar-link {% if '/auth/profile/' in request.path %}active{% endif %}">
+      <i class="bi bi-person-badge"></i>
+      <span>Profile & KYC</span>
+    </a>
+
+    <a href="/auth/change-password/" class="bnb-sidebar-link {% if '/auth/change-password/' in request.path %}active{% endif %}">
+      <i class="bi bi-shield-lock"></i>
+      <span>Security Settings</span>
+    </a>
+
+    <hr class="border-secondary my-2 opacity-25">
+
+    <form method="post" action="/auth/logout/" class="m-0">
+      {% csrf_token %}
+      <button type="submit" class="bnb-sidebar-link w-100 text-start bg-transparent border-0 text-danger-emphasis">
+        <i class="bi bi-box-arrow-right text-danger"></i>
+        <span>Logout</span>
+      </button>
+    </form>
+  </div>
+</div>
+<!-- Backdrop for mobile drawer -->
+<div class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-none" id="bnbSidebarBackdrop" style="z-index: 1025;"></div>

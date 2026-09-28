@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Apply for a Loan | Bharat Nidhi Bank{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-9">
+    <!-- Header -->
+    <div class="d-flex align-items-center gap-3 mb-4 pb-2 border-bottom">
+      <a href="{% url 'loans:list' %}" class="btn btn-outline-secondary btn-sm rounded-circle p-2" title="Back to Loans">
+        <i class="bi bi-arrow-left"></i>
+      </a>
+      <div>
+        <h2 class="h4 fw-bold text-dark mb-0">Loan Application Form</h2>
+        <span class="text-muted small">Submit your retail loan application for instant simulated appraisal</span>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Left: Form -->
+      <div class="col-lg-8">
+        <div class="card border shadow-sm rounded-4 overflow-hidden mb-4">
+          <div class="card-header bg-white py-3 px-4 border-bottom">
+            <h5 class="h6 fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+              <i class="bi bi-file-earmark-medical text-primary"></i> Application Details
+            </h5>
+          </div>
+
+          <div class="card-body p-4">
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger py-2 px-3 small mb-4">
+                {% for error in form.non_field_errors %}
+                  <div><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <form method="post" novalidate id="loanForm">
+              {% csrf_token %}
+
+              <!-- Loan Type Field -->
+              <div class="mb-4">
+                <label for="id_loan_type" class="form-label fw-bold text-dark">
+                  Select Loan Category <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light text-primary"><i class="bi bi-tag-fill"></i></span>
+                  <select name="loan_type" id="id_loan_type" class="form-select" required>
+                    <option value="">-- Choose Loan Product --</option>
+                    {% for lt in form.fields.loan_type.queryset %}
+                      <option value="{{ lt.pk }}" data-rate="{{ lt.interest_rate }}" data-min-amt="{{ lt.min_amount }}" data-max-amt="{{ lt.max_amount }}" data-min-ten="{{ lt.tenure_min }}" data-max-ten="{{ lt.tenure_max }}" {% if form.loan_type.value|stringformat:"s" == lt.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ lt.name }} ({{ lt.interest_rate }}% p.a.)
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                {% if form.loan_type.errors %}
+                  <div class="text-danger small mt-1">{{ form.loan_type.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <!-- Amount Requested -->
+              <div class="mb-4">
+                <label for="id_amount_requested" class="form-label fw-bold text-dark">
+                  Requested Principal Amount (₹) <span class="text-danger">*</span>
+                </label>
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text bg-primary text-white fw-bold fs-4">₹</span>
+                  <input type="number" step="1000" min="1000" name="amount_requested" id="id_amount_requested" class="form-control fs-4 fw-bold text-dark" placeholder="500000" value="{{ form.amount_requested.value|default:'500000' }}" required>
+                </div>
+                <div class="form-text small text-muted" id="amountRangeHelp">
+                  Enter desired loan amount within eligible product limits
+                </div>
+                {% if form.amount_requested.errors %}
+                  <div class="text-danger small mt-1">{{ form.amount_requested.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <!-- Tenure Months -->
+              <div class="mb-4">
+                <label for="id_tenure_months" class="form-label fw-bold text-dark">
+                  Repayment Tenure (in Months) <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light"><i class="bi bi-calendar3"></i></span>
+                  <input type="number" min="6" max="360" name="tenure_months" id="id_tenure_months" class="form-control" placeholder="60" value="{{ form.tenure_months.value|default:'60' }}" required>
+                  <span class="input-group-text bg-light text-muted">Months</span>
+                </div>
+                <div class="form-text small text-muted" id="tenureRangeHelp">
+                  Select a tenure comfortable for monthly servicing (e.g. 12, 24, 60, 120 months)
+                </div>
+                {% if form.tenure_months.errors %}
+                  <div class="text-danger small mt-1">{{ form.tenure_months.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <!-- Purpose -->
+              <div class="mb-4">
+                <label for="id_purpose" class="form-label fw-bold text-dark">
+                  Purpose / Justification of Loan <span class="text-danger">*</span>
+                </label>
+                <textarea name="purpose" id="id_purpose" rows="3" class="form-control" placeholder="Please detail the reason for requesting this loan (at least 20 characters)..." required>{{ form.purpose.value|default:'' }}</textarea>
+                <div class="form-text small text-muted">
+                  Minimum 20 characters, maximum 1000 characters
+                </div>
+                {% if form.purpose.errors %}
+                  <div class="text-danger small mt-1">{{ form.purpose.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                <a href="{% url 'loans:list' %}" class="btn btn-outline-secondary">
+                  Cancel
+                </a>
+                <button type="submit" class="btn btn-bnb-primary btn-lg px-4 shadow">
+                  <i class="bi bi-send-check me-1"></i> Submit Application
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Realtime EMI Estimator Card -->
+      <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 text-white p-4 mb-4" style="background: linear-gradient(135deg, #0B1B3D 0%, #152A5A 60%, #1A56DB 100%);">
+          <div class="small text-uppercase text-warning fw-bold letter-spacing-1 mb-2">Live EMI Projection</div>
+          <div class="display-6 fw-bold my-2 text-white" id="liveEmiDisplay">₹10,258</div>
+          <small class="text-white-50 d-block mb-3">Estimated Equated Monthly Installment</small>
+
+          <div class="border-top border-white-50 pt-3 small">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="text-white-50">Annual Interest Rate</span>
+              <span class="fw-bold" id="liveRateDisplay">8.50%</span>
+            </div>
+            <div class="d-flex justify-content-between mb-1">
+              <span class="text-white-50">Principal Borrowed</span>
+              <span class="fw-bold" id="livePrincipalDisplay">₹5,00,000</span>
+            </div>
+            <div class="d-flex justify-content-between mb-1">
+              <span class="text-white-50">Total Interest Payable</span>
+              <span class="fw-bold text-warning" id="liveInterestDisplay">₹1,15,480</span>
+            </div>
+            <div class="d-flex justify-content-between pt-2 border-top border-white-50">
+              <span class="text-white fw-bold">Total Amount Payable</span>
+              <span class="fw-bold text-white fs-6" id="liveTotalDisplay">₹6,15,480</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card bg-light border-0 rounded-4 p-3 small text-muted">
+          <h6 class="fw-bold text-dark small mb-2"><i class="bi bi-info-circle-fill text-primary me-1"></i> Loan Sanction Note</h6>
+          <p class="mb-0">
+            Submission creates an immediate simulated application in Bharat Nidhi Bank CBS. Loan sanctioning officers review applications under risk management norms before disbursal.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const typeSelect = document.getElementById('id_loan_type');
+  const amtInput = document.getElementById('id_amount_requested');
+  const tenureInput = document.getElementById('id_tenure_months');
+  const liveEmi = document.getElementById('liveEmiDisplay');
+  const liveRate = document.getElementById('liveRateDisplay');
+  const livePrincipal = document.getElementById('livePrincipalDisplay');
+  const liveInterest = document.getElementById('liveInterestDisplay');
+  const liveTotal = document.getElementById('liveTotalDisplay');
+  const amtHelp = document.getElementById('amountRangeHelp');
+  const tenHelp = document.getElementById('tenureRangeHelp');
+
+  function updateProjection() {
+    const selectedOption = typeSelect.options[typeSelect.selectedIndex];
+    let rate = 8.5;
+    if (selectedOption && selectedOption.dataset.rate) {
+      rate = parseFloat(selectedOption.dataset.rate);
+      liveRate.innerText = rate.toFixed(2) + '%';
+      if (selectedOption.dataset.minAmt && selectedOption.dataset.maxAmt) {
+        amtHelp.innerText = `Allowed range: ₹${parseFloat(selectedOption.dataset.minAmt).toLocaleString('en-IN')} - ₹${parseFloat(selectedOption.dataset.maxAmt).toLocaleString('en-IN')}`;
+      }
+      if (selectedOption.dataset.minTen && selectedOption.dataset.maxTen) {
+        tenHelp.innerText = `Allowed tenure: ${selectedOption.dataset.minTen} - ${selectedOption.dataset.maxTen} months`;
+      }
+    }
+
+    const P = parseFloat(amtInput.value) || 0;
+    const N = parseInt(tenureInput.value) || 1;
+    const r = (rate / 12) / 100;
+
+    livePrincipal.innerText = '₹' + Math.round(P).toLocaleString('en-IN');
+
+    if (P > 0 && r > 0 && N > 0) {
+      const emi = (P * r * Math.pow(1 + r, N)) / (Math.pow(1 + r, N) - 1);
+      const totalPayable = emi * N;
+      const totalInterest = totalPayable - P;
+
+      liveEmi.innerText = '₹' + Math.round(emi).toLocaleString('en-IN');
+      liveInterest.innerText = '₹' + Math.round(totalInterest).toLocaleString('en-IN');
+      liveTotal.innerText = '₹' + Math.round(totalPayable).toLocaleString('en-IN');
+    }
+  }
+
+  typeSelect.addEventListener('change', updateProjection);
+  amtInput.addEventListener('input', updateProjection);
+  tenureInput.addEventListener('input', updateProjection);
+
+  updateProjection();
+});
+</script>
+{% endblock %}

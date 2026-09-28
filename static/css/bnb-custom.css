@@ -1,0 +1,704 @@
+/* ==========================================================================
+   BHARAT NIDHI BANK (BNB) - MASTER DESIGN SYSTEM
+   Tagline: Banking for a stronger Bharat
+   ========================================================================== */
+
+:root {
+  --bnb-navy: #0B1B3D;
+  --bnb-navy-dark: #071228;
+  --bnb-navy-light: #152A5A;
+  --bnb-navy-900: #0a1733;
+  --bnb-blue: #1A56DB;
+  --bnb-blue-light: #3B82F6;
+  --bnb-blue-subtle: #EFF6FF;
+  --bnb-saffron: #E67E22;
+  --bnb-saffron-dark: #C2410C;
+  --bnb-gold: #D97706;
+  --bnb-gold-light: #FEF3C7;
+  --bnb-gold-accent: #F59E0B;
+  --bnb-green: #10B981;
+  --bnb-green-dark: #047857;
+  --bnb-green-light: #D1FAE5;
+  --bnb-red: #EF4444;
+  --bnb-red-dark: #B91C1C;
+  --bnb-red-light: #FEE2E2;
+  --bnb-bg-page: #F8FAFC;
+  --bnb-bg-card: #FFFFFF;
+  --bnb-bg-alt: #F1F5F9;
+  --bnb-border: #E2E8F0;
+  --bnb-border-dark: #CBD5E1;
+  --bnb-text: #0F172A;
+  --bnb-text-secondary: #475569;
+  --bnb-text-muted: #64748B;
+  --bnb-sidebar-width: 260px;
+  --bnb-topbar-height: 68px;
+  --bnb-radius-sm: 6px;
+  --bnb-radius: 12px;
+  --bnb-radius-lg: 18px;
+  --bnb-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --bnb-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --bnb-shadow-lg: 0 12px 24px -4px rgba(15, 23, 42, 0.12), 0 4px 8px -2px rgba(15, 23, 42, 0.06);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--bnb-text);
+  background-color: var(--bnb-bg-page);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tricolor Indian Sovereign Accent Ribbon */
+.bnb-tricolor-bar {
+  height: 4px;
+  background: linear-gradient(90deg, #FF9933 0%, #FF9933 33.3%, #FFFFFF 33.3%, #FFFFFF 66.6%, #138808 66.6%, #138808 100%);
+  width: 100%;
+}
+
+/* Top Utility Bar */
+.bnb-utility-bar {
+  background-color: var(--bnb-navy-dark);
+  color: #CBD5E1;
+  font-size: 0.8125rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.bnb-utility-bar a {
+  color: #CBD5E1;
+  text-decoration: none;
+  transition: color 0.15s ease-in-out;
+}
+.bnb-utility-bar a:hover {
+  color: #FFFFFF;
+}
+
+/* Main Public Navbar */
+.bnb-navbar {
+  background-color: #FFFFFF;
+  box-shadow: var(--bnb-shadow-sm);
+  padding: 0.75rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+}
+.bnb-logo-img {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+}
+.bnb-nav-link {
+  font-weight: 500;
+  color: var(--bnb-navy) !important;
+  padding: 0.5rem 0.85rem !important;
+  border-radius: var(--bnb-radius-sm);
+  transition: all 0.15s ease;
+}
+.bnb-nav-link:hover {
+  color: var(--bnb-blue) !important;
+  background-color: var(--bnb-blue-subtle);
+}
+.btn-bnb-primary {
+  background-color: var(--bnb-blue);
+  color: #FFFFFF;
+  font-weight: 600;
+  border: 1px solid var(--bnb-blue);
+  border-radius: var(--bnb-radius-sm);
+  padding: 0.5rem 1.25rem;
+  transition: all 0.2s ease;
+}
+.btn-bnb-primary:hover, .btn-bnb-primary:focus {
+  background-color: #1545B3;
+  border-color: #1545B3;
+  color: #FFFFFF;
+  box-shadow: 0 4px 10px rgba(26, 86, 219, 0.25);
+}
+.btn-bnb-accent {
+  background-color: var(--bnb-saffron);
+  color: #FFFFFF;
+  font-weight: 600;
+  border: 1px solid var(--bnb-saffron);
+  border-radius: var(--bnb-radius-sm);
+  padding: 0.5rem 1.25rem;
+  transition: all 0.2s ease;
+}
+.btn-bnb-accent:hover, .btn-bnb-accent:focus {
+  background-color: var(--bnb-saffron-dark);
+  border-color: var(--bnb-saffron-dark);
+  color: #FFFFFF;
+  box-shadow: 0 4px 10px rgba(230, 126, 34, 0.3);
+}
+.btn-bnb-navy {
+  background-color: var(--bnb-navy);
+  color: #FFFFFF;
+  font-weight: 600;
+  border: 1px solid var(--bnb-navy);
+  border-radius: var(--bnb-radius-sm);
+}
+.btn-bnb-navy:hover {
+  background-color: var(--bnb-navy-dark);
+  color: #FFFFFF;
+}
+.btn-bnb-outline {
+  background-color: transparent;
+  color: var(--bnb-navy);
+  font-weight: 600;
+  border: 1.5px solid var(--bnb-navy);
+  border-radius: var(--bnb-radius-sm);
+  padding: 0.5rem 1.25rem;
+}
+.btn-bnb-outline:hover {
+  background-color: var(--bnb-navy);
+  color: #FFFFFF;
+}
+
+/* Hero Section */
+.bnb-hero-wrapper {
+  position: relative;
+  background-color: var(--bnb-navy);
+  overflow: hidden;
+  border-bottom: 3px solid var(--bnb-saffron);
+}
+.bnb-hero-bg {
+  width: 100%;
+  max-height: 480px;
+  object-fit: cover;
+  opacity: 0.45;
+  filter: contrast(110%);
+}
+.bnb-hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, rgba(11, 27, 61, 0.94) 0%, rgba(11, 27, 61, 0.8) 45%, rgba(11, 27, 61, 0.3) 100%);
+  display: flex;
+  align-items: center;
+}
+.bnb-hero-title {
+  color: #FFFFFF;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  font-size: 2.75rem;
+  line-height: 1.2;
+}
+.bnb-hero-tagline {
+  color: #F8FAFC;
+  font-size: 1.35rem;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+}
+.bnb-hero-motto {
+  color: #FCD34D;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 1.75rem;
+}
+
+/* Quick Services Strip */
+.bnb-quick-strip {
+  margin-top: -36px;
+  position: relative;
+  z-index: 10;
+}
+.bnb-quick-card {
+  background: #FFFFFF;
+  border-radius: var(--bnb-radius);
+  box-shadow: var(--bnb-shadow);
+  padding: 1.25rem 1rem;
+  text-align: center;
+  border: 1px solid var(--bnb-border);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+  color: var(--bnb-navy);
+  display: block;
+  height: 100%;
+}
+.bnb-quick-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--bnb-shadow-lg);
+  color: var(--bnb-blue);
+  border-color: var(--bnb-blue-light);
+}
+.bnb-quick-icon {
+  font-size: 2rem;
+  color: var(--bnb-blue);
+  margin-bottom: 0.5rem;
+  display: inline-block;
+}
+
+/* Feature & Product Cards */
+.bnb-card {
+  background: #FFFFFF;
+  border-radius: var(--bnb-radius);
+  border: 1px solid var(--bnb-border);
+  box-shadow: var(--bnb-shadow-sm);
+  overflow: hidden;
+  transition: all 0.2s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.bnb-card:hover {
+  box-shadow: var(--bnb-shadow);
+  border-color: var(--bnb-border-dark);
+}
+.bnb-card-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+.bnb-card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* Badges */
+.badge-bnb-success {
+  background-color: var(--bnb-green-light);
+  color: var(--bnb-green-dark);
+  font-weight: 600;
+  padding: 0.35em 0.65em;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.badge-bnb-pending {
+  background-color: var(--bnb-gold-light);
+  color: var(--bnb-gold);
+  font-weight: 600;
+  padding: 0.35em 0.65em;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  border: 1px solid rgba(217, 119, 6, 0.3);
+}
+.badge-bnb-failed {
+  background-color: var(--bnb-red-light);
+  color: var(--bnb-red-dark);
+  font-weight: 600;
+  padding: 0.35em 0.65em;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+.badge-bnb-reversed {
+  background-color: var(--bnb-bg-alt);
+  color: var(--bnb-text-muted);
+  font-weight: 600;
+  padding: 0.35em 0.65em;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  border: 1px solid var(--bnb-border);
+}
+.badge-bnb-active {
+  background-color: #E0E7FF;
+  color: #3730A3;
+  font-weight: 600;
+  padding: 0.35em 0.65em;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+}
+
+/* Masked Numbers */
+.bnb-masked {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--bnb-navy);
+}
+
+/* Security Notice Box */
+.bnb-security-box {
+  background-color: #FEF3C7;
+  border-left: 4px solid var(--bnb-gold);
+  padding: 1rem 1.25rem;
+  border-radius: 0 var(--bnb-radius-sm) var(--bnb-radius-sm) 0;
+  color: #78350F;
+  font-size: 0.9rem;
+}
+
+/* Demo Mode Badge */
+.bnb-demo-badge {
+  background-color: #F59E0B;
+  color: #78350F;
+  font-weight: 700;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   NET-BANKING WORKSPACE (SIDEBAR + TOPBAR + CONTENT)
+   ========================================================================== */
+
+.bnb-app-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bnb-bg-page);
+}
+
+/* Sidebar */
+.bnb-sidebar {
+  width: var(--bnb-sidebar-width);
+  background-color: var(--bnb-navy);
+  color: #FFFFFF;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1030;
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+.bnb-sidebar-brand {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.bnb-sidebar-logo {
+  height: 42px;
+  width: auto;
+}
+.bnb-sidebar-nav {
+  padding: 1rem 0.75rem;
+  flex-grow: 1;
+}
+.bnb-sidebar-heading {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #94A3B8;
+  padding: 0.75rem 0.75rem 0.35rem;
+  font-weight: 700;
+}
+.bnb-sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #E2E8F0;
+  text-decoration: none;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--bnb-radius-sm);
+  font-weight: 500;
+  font-size: 0.9125rem;
+  transition: all 0.15s ease;
+  margin-bottom: 0.15rem;
+}
+.bnb-sidebar-link i {
+  font-size: 1.15rem;
+  color: #94A3B8;
+  width: 1.5rem;
+  text-align: center;
+  transition: color 0.15s ease;
+}
+.bnb-sidebar-link:hover {
+  background-color: var(--bnb-navy-light);
+  color: #FFFFFF;
+}
+.bnb-sidebar-link:hover i {
+  color: var(--bnb-gold-accent);
+}
+.bnb-sidebar-link.active {
+  background-color: var(--bnb-blue);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+.bnb-sidebar-link.active i {
+  color: #FFFFFF;
+}
+
+/* Net-Banking Topbar & Main */
+.bnb-main-content {
+  flex-grow: 1;
+  margin-left: var(--bnb-sidebar-width);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 100vh;
+}
+.bnb-topbar {
+  height: var(--bnb-topbar-height);
+  background-color: #FFFFFF;
+  border-bottom: 1px solid var(--bnb-border);
+  padding: 0 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+}
+.bnb-workspace {
+  padding: 1.75rem;
+  flex-grow: 1;
+}
+
+/* Bank Account Card Design */
+.bnb-account-card {
+  background: linear-gradient(135deg, #0B1B3D 0%, #152A5A 50%, #1A56DB 100%);
+  color: #FFFFFF;
+  border-radius: var(--bnb-radius);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--bnb-shadow);
+}
+.bnb-account-card::after {
+  content: "";
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.bnb-account-type {
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #FCD34D;
+  font-weight: 700;
+}
+.bnb-account-balance {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0.5rem 0;
+  letter-spacing: -0.5px;
+}
+.bnb-account-num {
+  font-family: monospace;
+  font-size: 1.05rem;
+  color: #E2E8F0;
+  letter-spacing: 2px;
+}
+
+/* Debit Card Visual Element */
+.bnb-debit-card-visual {
+  width: 100%;
+  max-width: 380px;
+  border-radius: 16px;
+  box-shadow: 0 12px 28px rgba(11, 27, 61, 0.25);
+  transition: transform 0.2s ease;
+}
+.bnb-debit-card-visual:hover {
+  transform: scale(1.02);
+}
+
+/* Transfer Wizard Steps */
+.bnb-wizard {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  position: relative;
+}
+.bnb-wizard::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: 40px;
+  right: 40px;
+  height: 3px;
+  background-color: var(--bnb-border);
+  z-index: 1;
+}
+.bnb-step {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  flex: 1;
+}
+.bnb-step-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  border: 3px solid var(--bnb-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  margin: 0 auto 0.5rem;
+  color: var(--bnb-text-muted);
+  transition: all 0.2s ease;
+}
+.bnb-step.active .bnb-step-circle {
+  border-color: var(--bnb-blue);
+  background-color: var(--bnb-blue);
+  color: #FFFFFF;
+  box-shadow: 0 0 0 4px rgba(26, 86, 219, 0.2);
+}
+.bnb-step.completed .bnb-step-circle {
+  border-color: var(--bnb-green);
+  background-color: var(--bnb-green);
+  color: #FFFFFF;
+}
+.bnb-step-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--bnb-text-secondary);
+}
+.bnb-step.active .bnb-step-label {
+  color: var(--bnb-blue);
+  font-weight: 700;
+}
+
+/* Tables */
+.bnb-table-responsive {
+  border-radius: var(--bnb-radius);
+  border: 1px solid var(--bnb-border);
+  background-color: #FFFFFF;
+  overflow-x: auto;
+  box-shadow: var(--bnb-shadow-sm);
+}
+.bnb-table {
+  width: 100%;
+  margin-bottom: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.bnb-table thead th {
+  background-color: #F8FAFC;
+  color: var(--bnb-navy);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--bnb-border);
+  white-space: nowrap;
+}
+.bnb-table tbody td {
+  padding: 0.95rem 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--bnb-border);
+  font-size: 0.875rem;
+}
+.bnb-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.bnb-table tbody tr:hover {
+  background-color: #F8FAFC;
+}
+
+/* Forms styling */
+.form-control, .form-select,
+input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="date"], select, textarea {
+  border: 1.5px solid var(--bnb-border-dark);
+  border-radius: var(--bnb-radius-sm);
+  padding: 0.65rem 0.85rem;
+  font-size: 0.9375rem;
+  width: 100%;
+  background-color: #FFFFFF;
+  color: var(--bnb-text);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.form-control:focus, .form-select:focus,
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, input[type="number"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
+  border-color: var(--bnb-blue);
+  box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.15);
+  outline: none;
+}
+input[type="checkbox"], input[type="radio"] {
+  width: auto;
+  accent-color: var(--bnb-blue);
+}
+.form-label {
+  font-weight: 600;
+  color: var(--bnb-navy);
+  font-size: 0.875rem;
+  margin-bottom: 0.35rem;
+}
+
+/* Footer */
+.bnb-footer {
+  background-color: var(--bnb-navy-dark);
+  color: #94A3B8;
+  padding: 3.5rem 0 1.5rem;
+  margin-top: auto;
+  border-top: 4px solid var(--bnb-saffron);
+}
+.bnb-footer h6 {
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 1.25rem;
+  letter-spacing: 0.5px;
+}
+.bnb-footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.bnb-footer ul li {
+  margin-bottom: 0.55rem;
+}
+.bnb-footer a {
+  color: #CBD5E1;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.15s ease;
+}
+.bnb-footer a:hover {
+  color: #FCD34D;
+}
+.bnb-footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1.5rem;
+  margin-top: 2.5rem;
+  font-size: 0.8125rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+  .bnb-sidebar {
+    transform: translateX(-100%);
+  }
+  .bnb-sidebar.show {
+    transform: translateX(0);
+  }
+  .bnb-main-content {
+    margin-left: 0;
+  }
+  .bnb-hero-title {
+    font-size: 2rem;
+  }
+  .bnb-hero-tagline {
+    font-size: 1.1rem;
+  }
+  .bnb-hero-overlay {
+    background: rgba(11, 27, 61, 0.92);
+  }
+}
+
+@media (max-width: 575.98px) {
+  .bnb-hero-title {
+    font-size: 1.7rem;
+  }
+  .bnb-workspace {
+    padding: 1rem;
+  }
+  .bnb-topbar {
+    padding: 0 1rem;
+  }
+  .bnb-account-balance {
+    font-size: 1.6rem;
+  }
+}

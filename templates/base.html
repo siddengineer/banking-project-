@@ -1,0 +1,88 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0B1B3D">
+  <meta name="description" content="Bharat Nidhi Bank - Banking for a stronger Bharat. Secure Internet Banking Simulation.">
+  <title>{% block title %}{{ title|default:"Bharat Nidhi Bank" }}{% endblock %} | BNB</title>
+
+  <!-- Favicon using BNB logo -->
+  <link rel="icon" type="image/png" href="{% static 'images/brand/bnb-logo.png' %}">
+
+  <!-- Local & CDN Vendor CSS (Bootstrap 5.3.3 & Bootstrap Icons) -->
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Bharat Nidhi Bank Custom Design System -->
+  <link rel="stylesheet" href="{% static 'css/bnb-custom.css' %}">
+
+  {% block head_extra %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+  {% if user.is_authenticated and not is_public_page and not is_auth_flow %}
+    <!-- ================= AUTHENTICATED NET-BANKING WORKSPACE ================= -->
+    <div class="bnb-app-wrapper">
+      {% include "components/banking_sidebar.html" %}
+
+      <div class="bnb-main-content">
+        {% include "components/banking_header.html" %}
+
+        <main id="main-content" class="bnb-workspace">
+          {% include "components/messages.html" %}
+  {% else %}
+    <!-- ================= PUBLIC & AUTHENTICATION PAGES ================= -->
+    <div class="d-flex flex-column min-vh-100">
+      {% include "components/public_header.html" %}
+      {% include "components/public_navbar.html" %}
+
+      <main id="main-content" class="flex-grow-1">
+        {% if not is_home %}
+          <div class="container py-4">
+        {% endif %}
+        {% include "components/messages.html" %}
+  {% endif %}
+
+  <!-- Single Master Content Block -->
+  {% block content %}
+    {% block home_content %}{% endblock %}
+  {% endblock %}
+
+  {% if user.is_authenticated and not is_public_page and not is_auth_flow %}
+        </main>
+
+        <footer class="bg-white border-top py-3 px-4 text-muted small d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div>
+            &copy; {% now "Y" %} Bharat Nidhi Bank &bull; Academic Net-Banking Simulation
+          </div>
+          <div>
+            <span class="badge bg-success-subtle text-success border border-success-subtle me-2"><i class="bi bi-shield-check"></i> Session Secured</span>
+            <a href="/support/" class="text-decoration-none text-secondary">Support</a> &bull; 
+            <a href="/security-info/" class="text-decoration-none text-secondary">Security Advisory</a>
+          </div>
+        </footer>
+      </div>
+    </div>
+  {% else %}
+        {% if not is_home %}
+          </div>
+        {% endif %}
+      </main>
+
+      {% include "components/footer.html" %}
+    </div>
+  {% endif %}
+
+  <!-- Local & CDN Vendor JS Bundle -->
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  
+  <!-- Master BNB Scripts -->
+  <script src="{% static 'js/bnb-main.js' %}"></script>
+
+  {% block scripts_extra %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,3 @@
+<table border="1" cellpadding="4"><thead><tr>{% for h in tbl.headers %}<th>{{ h }}</th>{% endfor %}</tr></thead>
+<tbody>{% for row in tbl.rows %}<tr>{% for cell in row %}<td>{% if cell.url %}<a href="{{ cell.url }}">{{ cell.text }}</a>{% else %}{{ cell }}{% endif %}</td>{% endfor %}</tr>
+{% empty %}<tr><td colspan="{{ tbl.headers|length }}">Nothing to show.</td></tr>{% endfor %}</tbody></table>

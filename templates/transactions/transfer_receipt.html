@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Transaction Receipt - {{ transfer.reference_number }} | Bharat Nidhi Bank{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <!-- Wizard Progress Tracker (All 4 Completed) -->
+    <div class="bnb-wizard my-2 d-print-none">
+      <div class="bnb-step completed">
+        <div class="bnb-step-circle"><i class="bi bi-check-lg"></i></div>
+        <div class="bnb-step-label">Transfer Details</div>
+      </div>
+      <div class="bnb-step completed">
+        <div class="bnb-step-circle"><i class="bi bi-check-lg"></i></div>
+        <div class="bnb-step-label">Review</div>
+      </div>
+      <div class="bnb-step completed">
+        <div class="bnb-step-circle"><i class="bi bi-check-lg"></i></div>
+        <div class="bnb-step-label">OTP Verification</div>
+      </div>
+      <div class="bnb-step {% if transfer.status == 'SUCCESS' %}completed{% else %}active{% endif %}">
+        <div class="bnb-step-circle">
+          {% if transfer.status == 'SUCCESS' %}
+            <i class="bi bi-check-lg"></i>
+          {% elif transfer.status == 'FAILED' %}
+            <i class="bi bi-x-lg text-danger"></i>
+          {% else %}
+            4
+          {% endif %}
+        </div>
+        <div class="bnb-step-label">Complete</div>
+      </div>
+    </div>
+
+    <!-- Receipt Card Container -->
+    <div class="card border shadow-sm rounded-4 overflow-hidden mb-4 bnb-receipt-card">
+      <!-- Status Header Banner -->
+      {% if transfer.status == 'SUCCESS' %}
+        <div class="bg-success text-white py-4 px-4 text-center">
+          <div class="d-inline-flex align-items-center justify-content-center bg-white text-success rounded-circle shadow-sm mb-2" style="width: 64px; height: 64px;">
+            <i class="bi bi-check-circle-fill fs-1"></i>
+          </div>
+          <h3 class="h4 fw-bold mb-1">Transfer successful</h3>
+          <p class="mb-0 text-white-50 small">Your transaction has been securely processed and settled.</p>
+        </div>
+      {% elif transfer.status == 'FAILED' %}
+        <div class="bg-danger text-white py-4 px-4 text-center">
+          <div class="d-inline-flex align-items-center justify-content-center bg-white text-danger rounded-circle shadow-sm mb-2" style="width: 64px; height: 64px;">
+            <i class="bi bi-x-circle-fill fs-1"></i>
+          </div>
+          <h3 class="h4 fw-bold mb-1">Transfer Failed</h3>
+          <p class="mb-0 text-white-50 small">{{ transfer.failure_reason|default:"The transaction could not be completed." }}</p>
+        </div>
+      {% else %}
+        <div class="bg-warning text-dark py-4 px-4 text-center">
+          <div class="d-inline-flex align-items-center justify-content-center bg-white text-warning rounded-circle shadow-sm mb-2" style="width: 64px; height: 64px;">
+            <i class="bi bi-hourglass-split fs-1"></i>
+          </div>
+          <h3 class="h4 fw-bold mb-1">Transfer Awaiting Verification</h3>
+          <p class="mb-0 text-muted small">Reference: {{ transfer.reference_number }}</p>
+        </div>
+      {% endif %}
+
+      <div class="card-body p-4">
+        <!-- Bank Watermark Header for Print -->
+        <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+          <div class="d-flex align-items-center gap-2">
+            <img src="{% static 'images/brand/bnb-logo.png' %}" alt="Bharat Nidhi Bank" height="38">
+            <div>
+              <div class="fw-bold text-dark fs-6">Bharat Nidhi Bank</div>
+              <div class="text-muted small" style="font-size: 0.75rem;">Electronic Fund Transfer Advice</div>
+            </div>
+          </div>
+          <div class="text-end">
+            <span class="badge {% if transfer.status == 'SUCCESS' %}bg-success-subtle text-success border border-success-subtle{% elif transfer.status == 'FAILED' %}bg-danger-subtle text-danger border border-danger-subtle{% else %}bg-warning-subtle text-warning border border-warning-subtle{% endif %} px-3 py-1 fs-6">
+              {{ transfer.get_status_display|default:transfer.status }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Key Reference & Amount Details -->
+        <div class="text-center py-2 mb-4 bg-light rounded-3 p-3">
+          <div class="text-muted small text-uppercase letter-spacing-1">Amount Transferred</div>
+          <div class="display-6 fw-bold {% if transfer.status == 'SUCCESS' %}text-success{% elif transfer.status == 'FAILED' %}text-danger{% else %}text-primary{% endif %} my-1">
+            ₹{{ transfer.amount }}
+          </div>
+          <div class="text-secondary small">
+            Reference Number: <strong class="font-monospace text-dark">{{ transfer.reference_number }}</strong>
+            <button type="button" class="btn btn-sm btn-link p-0 ms-1 d-print-none text-decoration-none" onclick="navigator.clipboard.writeText('{{ transfer.reference_number }}'); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy', 1500);" title="Copy Reference">
+              <i class="bi bi-clipboard"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Detailed Breakdown Grid -->
+        <div class="row g-3 mb-4">
+          <div class="col-sm-6">
+            <div class="p-3 border rounded-3 h-100 bg-white">
+              <div class="text-muted small mb-1"><i class="bi bi-arrow-up-right-circle text-danger me-1"></i> Debited From</div>
+              <div class="fw-bold text-dark fs-6">{{ transfer.from_account.masked_number }}</div>
+              <div class="small text-muted">{{ transfer.from_account.account_type.type_name }} &bull; Branch: {{ transfer.from_account.branch.branch_name }}</div>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <div class="p-3 border rounded-3 h-100 bg-white">
+              <div class="text-muted small mb-1"><i class="bi bi-arrow-down-left-circle text-success me-1"></i> Credited To</div>
+              <div class="fw-bold text-dark fs-6">{{ dest }}</div>
+              {% if transfer.transfer_type == 'EXTERNAL' and transfer.beneficiary %}
+                <div class="small text-muted">{{ transfer.beneficiary.bank_name }} &bull; IFSC: {{ transfer.beneficiary.ifsc_code }}</div>
+              {% elif transfer.to_account %}
+                <div class="small text-muted">{{ transfer.to_account.account_type.type_name }} (Own Account)</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="p-2 border rounded-2 bg-light">
+              <span class="text-muted small d-block">Transaction Date</span>
+              <strong class="text-dark small">{{ transfer.created_at|date:"d-m-Y H:i:s" }}</strong>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="p-2 border rounded-2 bg-light">
+              <span class="text-muted small d-block">Transfer Type / Channel</span>
+              <strong class="text-dark small">{{ transfer.get_transfer_type_display }}{% if transfer.mode %} ({{ transfer.mode }}){% endif %}</strong>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="p-2 border rounded-2 bg-light">
+              <span class="text-muted small d-block">Payment Mode</span>
+              <strong class="text-dark small">{{ transfer.mode|default:"Internal / CBS" }}</strong>
+            </div>
+          </div>
+
+          {% if transfer.remarks %}
+            <div class="col-12">
+              <div class="p-2 border rounded-2 bg-light">
+                <span class="text-muted small d-block">Remarks</span>
+                <span class="text-dark small fst-italic">"{{ transfer.remarks }}"</span>
+              </div>
+            </div>
+          {% endif %}
+
+          {% if transfer.transfer_type == 'EXTERNAL' %}
+            <div class="col-12">
+              <div class="alert alert-info py-2 px-3 small mb-0">
+                <i class="bi bi-info-circle-fill me-1"></i> Note: Simulated transfer for academic demonstration &mdash; external interbank settlement simulated.
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Action Buttons (Hidden on Print) -->
+        <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center pt-3 border-top d-print-none">
+          <div>
+            <button type="button" class="btn btn-outline-secondary" onclick="window.print();">
+              <i class="bi bi-printer me-1"></i> Print Receipt
+            </button>
+          </div>
+          <div class="d-flex gap-2">
+            <a href="{% url 'transactions:transfer_new' %}" class="btn btn-outline-primary">
+              <i class="bi bi-plus-circle me-1"></i> New Transfer
+            </a>
+            <a href="{% url 'core:dashboard' %}" class="btn btn-bnb-primary">
+              <i class="bi bi-house-door me-1"></i> Back to Dashboard
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+@media print {
+  body { background: white !important; }
+  .bnb-sidebar, .bnb-topbar, .bnb-utility-bar, .bnb-navbar, .bnb-footer, .d-print-none {
+    display: none !important;
+  }
+  .bnb-main-content {
+    margin-left: 0 !important;
+  }
+  .bnb-receipt-card {
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
+</style>
+{% endblock %}

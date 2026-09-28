@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Debit &amp; Credit Cards | Bharat Nidhi Bank{% endblock %}
+
+{% block content %}
+<div class="bnb-page-container">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 pb-2 border-bottom">
+    <div>
+      <h2 class="h3 fw-bold text-dark mb-1">
+        <i class="bi bi-credit-card-2-front text-primary me-2"></i> My Cards
+      </h2>
+      <p class="text-muted small mb-0">Manage and secure your Bharat Nidhi Bank debit and prepaid cards</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'core:cards_info' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-info-circle me-1"></i> Explore Card Benefits
+      </a>
+    </div>
+  </div>
+
+  {% if cards %}
+    <div class="row g-4">
+      {% for c in cards %}
+        <div class="col-lg-6 col-xl-4">
+          <div class="card h-100 border shadow-sm rounded-4 overflow-hidden position-relative">
+            <!-- Visual Card Header -->
+            <div class="p-4 text-white position-relative" style="background: linear-gradient(135deg, #0B1B3D 0%, #152A5A 50%, #1A56DB 100%);">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="fw-bold tracking-wider text-uppercase small text-warning">
+                  <i class="bi bi-bank me-1"></i> Bharat Nidhi Bank
+                </span>
+                <span class="badge {% if c.status == 'ACTIVE' %}bg-success{% elif c.status == 'TEMPORARILY_DISABLED' %}bg-warning text-dark{% else %}bg-danger{% endif %} rounded-pill px-3">
+                  {{ c.get_status_display|default:c.status }}
+                </span>
+              </div>
+
+              <!-- EMV Chip & Contactless -->
+              <div class="d-flex align-items-center gap-3 my-2">
+                <div class="bg-warning-subtle border border-warning rounded-2 px-2 py-1" style="width: 40px; height: 28px; background: linear-gradient(135deg, #FCD34D, #F59E0B);">
+                  <div class="border-top border-bottom border-dark opacity-25 h-100"></div>
+                </div>
+                <i class="bi bi-reception-4 fs-5 text-white-50"></i>
+              </div>
+
+              <!-- Card Number -->
+              <div class="font-monospace fs-4 fw-bold letter-spacing-2 my-2 text-white text-shadow">
+                {{ c.masked_number }}
+              </div>
+
+              <div class="d-flex justify-content-between align-items-end mt-3 pt-2">
+                <div>
+                  <div class="text-white-50" style="font-size: 0.65rem; text-transform: uppercase;">Card Holder</div>
+                  <div class="fw-semibold text-uppercase small">{{ c.name_on_card }}</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-white-50" style="font-size: 0.65rem; text-transform: uppercase;">Valid Thru</div>
+                  <div class="fw-semibold font-monospace small">{{ c.expiry_date|date:"m/y" }}</div>
+                </div>
+                <div>
+                  <span class="badge bg-white text-dark fw-bold px-2 py-1" style="font-size: 0.75rem;">
+                    {{ c.get_card_type_display|default:c.card_type }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Body / Meta -->
+            <div class="card-body p-3 bg-white">
+              <div class="d-flex justify-content-between align-items-center small py-1 border-bottom">
+                <span class="text-muted">Linked Account</span>
+                <span class="fw-bold font-monospace text-dark">{{ c.account.masked_number }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center small py-1 border-bottom">
+                <span class="text-muted">Daily ATM Limit</span>
+                <span class="fw-bold text-dark">₹{{ c.settings.daily_atm_limit }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center small py-1">
+                <span class="text-muted">Daily POS / E-com Limit</span>
+                <span class="fw-bold text-dark">₹{{ c.settings.daily_pos_limit }}</span>
+              </div>
+            </div>
+
+            <!-- Card Footer Quick Actions -->
+            <div class="card-footer bg-light p-3 border-top d-flex gap-2">
+              <a href="{% url 'cards:detail' ref=c.card_reference %}" class="btn btn-bnb-primary btn-sm flex-grow-1">
+                <i class="bi bi-sliders me-1"></i> Manage Controls &amp; Limits
+              </a>
+              {% if c.status == 'ACTIVE' %}
+                <a href="{% url 'cards:limits' ref=c.card_reference %}" class="btn btn-outline-secondary btn-sm" title="Change Limits">
+                  <i class="bi bi-pencil"></i>
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="text-center py-5 bg-white rounded-4 border shadow-sm my-4">
+      <img src="{% static 'images/cards/debit-card.png' %}" alt="No Cards" style="max-height: 180px; width: auto;" class="mb-3 opacity-75">
+      <h5 class="fw-bold text-dark">No Active Cards Found</h5>
+      <p class="text-muted small mb-3">You do not have any debit cards registered with your customer account.</p>
+      <a href="{% url 'core:cards_info' %}" class="btn btn-bnb-primary btn-sm px-4">
+        Apply for a BNB Debit Card
+      </a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

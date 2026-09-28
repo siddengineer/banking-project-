@@ -1,0 +1,54 @@
+{% load static %}
+<header class="bnb-topbar">
+  <div class="d-flex align-items-center gap-3">
+    <!-- Hamburger button for mobile/tablet screens -->
+    <button class="btn btn-outline-secondary d-lg-none btn-sm" id="bnbSidebarToggle" type="button" aria-label="Toggle Navigation">
+      <i class="bi bi-list fs-5"></i>
+    </button>
+    
+    <div class="d-flex flex-column">
+      <span class="fw-bold text-dark fs-6 d-none d-sm-inline">Bharat Nidhi Bank Net-Banking</span>
+      <span class="badge bg-warning text-dark align-self-start font-monospace" style="font-size: 0.68rem;">ACADEMIC SIMULATION</span>
+    </div>
+  </div>
+
+  <div class="d-flex align-items-center gap-3">
+    <!-- Quick Time & Security Badge -->
+    <div class="d-none d-md-flex align-items-center text-muted small">
+      <i class="bi bi-clock-history me-1 text-primary"></i>
+      <span id="bnbLiveTime">IST Session Active</span>
+    </div>
+
+    <!-- Notifications Icon with count -->
+    <a href="/notifications/" class="position-relative text-dark text-decoration-none p-2 rounded-circle hover-bg" title="Notifications">
+      <i class="bi bi-bell fs-5 text-secondary"></i>
+      {% if unread_count and unread_count > 0 %}
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">
+          {{ unread_count }}
+        </span>
+      {% endif %}
+    </a>
+
+    <!-- User Profile Dropdown -->
+    <div class="dropdown">
+      <button class="btn btn-sm btn-light border dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-person-circle text-primary fs-5"></i>
+        <span class="d-none d-sm-inline fw-semibold">{{ user.username }}</span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+        <li><h6 class="dropdown-header">Signed in as <strong>{{ user.username }}</strong></h6></li>
+        <li><a class="dropdown-item" href="/auth/profile/"><i class="bi bi-person me-2"></i>My Profile & KYC</a></li>
+        <li><a class="dropdown-item" href="/auth/change-password/"><i class="bi bi-key me-2"></i>Change Password</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <form method="post" action="/auth/logout/" class="m-0">
+            {% csrf_token %}
+            <button type="submit" class="dropdown-item text-danger">
+              <i class="bi bi-box-arrow-right me-2"></i>Logout
+            </button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>

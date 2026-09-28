@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Notifications &amp; Alerts | Bharat Nidhi Bank{% endblock %}
+
+{% block content %}
+<div class="bnb-page-container">
+  <!-- Top Header -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 pb-2 border-bottom">
+    <div>
+      <h2 class="h3 fw-bold text-dark mb-1">
+        <i class="bi bi-bell-fill text-primary me-2"></i> Notification Center
+      </h2>
+      <p class="text-muted small mb-0">Real-time alerts, security advisories, and transactional updates</p>
+    </div>
+    {% if unread_count %}
+      <form method="post" action="{% url 'notifications:mark_read' %}" class="m-0">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-primary btn-sm">
+          <i class="bi bi-check2-all me-1"></i> Mark All as Read ({{ unread_count }})
+        </button>
+      </form>
+    {% endif %}
+  </div>
+
+  <!-- Notification List -->
+  <div class="card border shadow-sm rounded-4 overflow-hidden mb-4">
+    {% if page_obj %}
+      <div class="list-group list-group-flush">
+        {% for n in page_obj %}
+          <div class="list-group-item p-3 {% if not n.is_read %}bg-primary-subtle border-start border-4 border-primary{% endif %} transition">
+            <div class="d-flex justify-content-between align-items-start gap-3">
+              <div class="d-flex align-items-start gap-3">
+                <div class="rounded-circle p-2 mt-1 {% if not n.is_read %}bg-primary text-white{% else %}bg-light text-secondary{% endif %}" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  {% if n.category == 'SECURITY' %}
+                    <i class="bi bi-shield-check"></i>
+                  {% elif n.category == 'TRANSACTION' %}
+                    <i class="bi bi-arrow-left-right"></i>
+                  {% else %}
+                    <i class="bi bi-bell"></i>
+                  {% endif %}
+                </div>
+                <div>
+                  <div class="d-flex align-items-center gap-2 mb-1">
+                    <h6 class="fw-bold text-dark mb-0 {% if not n.is_read %}text-primary{% endif %}">{{ n.title }}</h6>
+                    {% if not n.is_read %}
+                      <span class="badge bg-primary" style="font-size: 0.65rem;">NEW</span>
+                    {% endif %}
+                    {% if n.category %}
+                      <span class="badge bg-secondary-subtle text-secondary small">{{ n.category }}</span>
+                    {% endif %}
+                  </div>
+                  <p class="text-secondary small mb-1">{{ n.message }}</p>
+                  <small class="text-muted"><i class="bi bi-clock me-1"></i>{{ n.created_at|date:"d M Y, H:i" }}</small>
+                </div>
+              </div>
+
+              {% if not n.is_read %}
+                <form method="post" action="{% url 'notifications:mark_read' %}" class="m-0 flex-shrink-0">
+                  {% csrf_token %}
+                  <input type="hidden" name="id" value="{{ n.pk }}">
+                  <button type="submit" class="btn btn-sm btn-link text-primary text-decoration-none p-0" title="Mark as Read">
+                    <i class="bi bi-check2"></i>
+                  </button>
+                </form>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center py-5 bg-white">
+        <i class="bi bi-bell-slash text-muted fs-1 mb-2 d-block opacity-50"></i>
+        <h6 class="fw-bold text-dark">No Notifications</h6>
+        <p class="text-muted small mb-0">You are all caught up! New account alerts will appear here.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+    {% include "components/pagination.html" %}
+  {% endif %}
+</div>
+{% endblock %}

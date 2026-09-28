@@ -1,0 +1,404 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Bharat Nidhi Bank | Banking for a stronger Bharat{% endblock %}
+
+{% block home_content %}
+<!-- ================= 1. HERO SECTION ================= -->
+<section class="bnb-hero-wrapper position-relative">
+  <img src="{% static 'images/hero/homepage-hero.jpg' %}" alt="Bharat Nidhi Bank Hero" class="bnb-hero-bg w-100">
+  
+  <div class="bnb-hero-overlay">
+    <div class="container py-5">
+      <div class="row align-items-center">
+        <div class="col-lg-8 col-md-10">
+          <span class="badge bg-warning text-dark px-3 py-1 mb-3 fw-bold rounded-pill text-uppercase font-monospace">
+            <i class="bi bi-shield-check me-1"></i> Fictional Indian PSU Banking Simulation
+          </span>
+          <h1 class="bnb-hero-title mb-2">BHARAT NIDHI BANK</h1>
+          <p class="bnb-hero-tagline">Banking for a stronger Bharat</p>
+          <p class="bnb-hero-motto">Secure &bull; Simple &bull; Reliable</p>
+          
+          <div class="d-flex align-items-center gap-3 flex-wrap mt-4">
+            <a href="/personal/" class="btn btn-bnb-accent btn-lg px-4 py-2 shadow">
+              <i class="bi bi-person-plus-fill me-2"></i> Open Account
+            </a>
+            {% if user.is_authenticated %}
+              <a href="/dashboard/" class="btn btn-bnb-primary btn-lg px-4 py-2 shadow">
+                <i class="bi bi-speedometer2 me-2"></i> Go to Dashboard
+              </a>
+            {% else %}
+              <a href="/auth/login/" class="btn btn-outline-light btn-lg px-4 py-2 shadow">
+                <i class="bi bi-lock-fill me-2"></i> Internet Banking
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 2. ANNOUNCEMENTS TICKER ================= -->
+{% if announcements %}
+<div class="bg-light border-bottom py-2">
+  <div class="container d-flex align-items-center gap-3 flex-wrap">
+    <span class="badge bg-danger text-uppercase fw-bold px-2 py-1">
+      <i class="bi bi-megaphone-fill me-1"></i> Announcements
+    </span>
+    <div class="flex-grow-1 overflow-hidden">
+      {% for a in announcements %}
+        <span class="text-dark small me-4">
+          <span class="badge bg-primary-subtle text-primary border me-1">NEW</span>
+          <strong>{{ a.title }}</strong> &mdash; <span class="text-muted">{{ a.body|truncatechars:70 }}</span>
+        </span>
+      {% endfor %}
+    </div>
+    <a href="/announcements/" class="small text-primary text-decoration-none fw-semibold">View All &rarr;</a>
+  </div>
+</div>
+{% endif %}
+
+<!-- ================= 3. QUICK SERVICES STRIP ================= -->
+<div class="container bnb-quick-strip">
+  <div class="row g-3">
+    <div class="col-6 col-md-4 col-lg-2">
+      <a href="/personal/" class="bnb-quick-card">
+        <i class="bi bi-wallet2 bnb-quick-icon"></i>
+        <div class="fw-bold fs-6">Accounts</div>
+        <small class="text-muted">Savings & Current</small>
+      </a>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <a href="/deposits-info/" class="bnb-quick-card">
+        <i class="bi bi-piggy-bank bnb-quick-icon"></i>
+        <div class="fw-bold fs-6">Deposits</div>
+        <small class="text-muted">High-yield FD & RD</small>
+      </a>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <a href="/loans-info/" class="bnb-quick-card">
+        <i class="bi bi-cash-coin bnb-quick-icon"></i>
+        <div class="fw-bold fs-6">Loans</div>
+        <small class="text-muted">Home, Car & Education</small>
+      </a>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <a href="/cards-info/" class="bnb-quick-card">
+        <i class="bi bi-credit-card-2-front bnb-quick-icon"></i>
+        <div class="fw-bold fs-6">Cards</div>
+        <small class="text-muted">Debit & Global Cards</small>
+      </a>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <a href="/digital-info/" class="bnb-quick-card">
+        <i class="bi bi-phone bnb-quick-icon"></i>
+        <div class="fw-bold fs-6">Digital Banking</div>
+        <small class="text-muted">24x7 Net-Banking</small>
+      </a>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <a href="/support/" class="bnb-quick-card">
+        <i class="bi bi-headset bnb-quick-icon"></i>
+        <div class="fw-bold fs-6">Customer Care</div>
+        <small class="text-muted">Help & Grievance</small>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 4. FEATURED PRODUCTS ================= -->
+<section class="py-5 mt-4">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="text-primary fw-bold text-uppercase letter-spacing-1 small">Sovereign Financial Solutions</span>
+      <h2 class="fw-bold text-dark mt-1">Featured Banking Products</h2>
+      <p class="text-muted mx-auto" style="max-width: 600px;">
+        Designed to empower every Indian citizen, business, and family with security, transparent interest, and frictionless digital access.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <!-- Savings Account Card -->
+      <div class="col-md-4">
+        <div class="bnb-card">
+          <img src="{% static 'images/products/savings-account.jpg' %}" alt="Savings Account" class="bnb-card-img">
+          <div class="bnb-card-body">
+            <span class="badge bg-primary-subtle text-primary align-self-start mb-2">PERSONAL BANKING</span>
+            <h5 class="fw-bold text-dark">Savings Account (बचत खाता)</h5>
+            <p class="text-muted small flex-grow-1">
+              High interest up to 3.50% p.a. Zero maintenance options for students, senior citizen premiums, and instant Rupay debit cards.
+            </p>
+            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+              <span class="fw-bold text-success">From 3.00% p.a.</span>
+              <a href="/personal/" class="btn btn-outline-primary btn-sm rounded-pill px-3">Explore <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fixed Deposit Card -->
+      <div class="col-md-4">
+        <div class="bnb-card">
+          <img src="{% static 'images/products/fixed-deposit.jpg' %}" alt="Fixed Deposit" class="bnb-card-img">
+          <div class="bnb-card-body">
+            <span class="badge bg-warning-subtle text-dark align-self-start mb-2">GUARANTEED RETURNS</span>
+            <h5 class="fw-bold text-dark">Fixed & Recurring Deposits</h5>
+            <p class="text-muted small flex-grow-1">
+              Guaranteed high returns up to 6.80% p.a. Flexible tenures from 6 months to 10 years, monthly/quarterly payouts, and premature withdrawal support.
+            </p>
+            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+              <span class="fw-bold text-success">Up to 6.80% p.a.</span>
+              <a href="/deposits-info/" class="btn btn-outline-primary btn-sm rounded-pill px-3">Explore <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Digital Banking Card -->
+      <div class="col-md-4">
+        <div class="bnb-card">
+          <img src="{% static 'images/products/digital-banking.jpg' %}" alt="Digital Banking" class="bnb-card-img">
+          <div class="bnb-card-body">
+            <span class="badge bg-success-subtle text-success align-self-start mb-2">24x7 CONVENIENCE</span>
+            <h5 class="fw-bold text-dark">Next-Gen Internet Banking</h5>
+            <p class="text-muted small flex-grow-1">
+              Complete self-service banking with instant simulated fund transfers, beneficiary management, live e-statements, and robust security safeguards.
+            </p>
+            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+              <span class="fw-bold text-primary">Zero Fees</span>
+              <a href="/digital-info/" class="btn btn-outline-primary btn-sm rounded-pill px-3">Explore <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 5. LOANS SECTION ================= -->
+<section class="py-5 bg-white border-top border-bottom">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-5">
+      <div>
+        <span class="text-primary fw-bold text-uppercase letter-spacing-1 small">Affordable Credit Solutions</span>
+        <h2 class="fw-bold text-dark mb-0">Loan Products for Your Aspirations</h2>
+      </div>
+      <a href="/loans-info/" class="btn btn-bnb-outline btn-sm">View All Loan Schemes &rarr;</a>
+    </div>
+
+    <div class="row g-4">
+      <!-- Home Loan -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100 border shadow-sm rounded-3 overflow-hidden">
+          <img src="{% static 'images/loans/home-loan.jpg' %}" alt="Home Loan" class="w-100" style="height: 180px; object-fit: cover;">
+          <div class="card-body p-3 d-flex flex-direction-column">
+            <h5 class="fw-bold text-dark mb-1">Home Loan</h5>
+            <div class="text-success fw-bold small mb-2">Starting at 8.50% p.a.</div>
+            <p class="text-muted small mb-3 flex-grow-1">
+              Finance your dream home with low EMIs, zero prepayment penalties, and tenures up to 30 years.
+            </p>
+            <a href="/loans-info/" class="btn btn-bnb-primary btn-sm w-100">Check Eligibility</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vehicle Loan -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100 border shadow-sm rounded-3 overflow-hidden">
+          <img src="{% static 'images/loans/vehicle-loan.jpg' %}" alt="Vehicle Loan" class="w-100" style="height: 180px; object-fit: cover;">
+          <div class="card-body p-3 d-flex flex-direction-column">
+            <h5 class="fw-bold text-dark mb-1">Vehicle Loan</h5>
+            <div class="text-success fw-bold small mb-2">Starting at 9.00% p.a.</div>
+            <p class="text-muted small mb-3 flex-grow-1">
+              Drive home your new 4-wheeler or electric vehicle with fast approval and up to 90% financing.
+            </p>
+            <a href="/loans-info/" class="btn btn-bnb-primary btn-sm w-100">Check Eligibility</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Education Loan -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100 border shadow-sm rounded-3 overflow-hidden">
+          <img src="{% static 'images/loans/education-loan.jpg' %}" alt="Education Loan" class="w-100" style="height: 180px; object-fit: cover;">
+          <div class="card-body p-3 d-flex flex-direction-column">
+            <h5 class="fw-bold text-dark mb-1">Education Loan</h5>
+            <div class="text-success fw-bold small mb-2">Starting at 9.50% p.a.</div>
+            <p class="text-muted small mb-3 flex-grow-1">
+              Comprehensive financial coverage for premier institutions in India and abroad with flexible repayment.
+            </p>
+            <a href="/loans-info/" class="btn btn-bnb-primary btn-sm w-100">Check Eligibility</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Personal Loan -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100 border shadow-sm rounded-3 overflow-hidden">
+          <img src="{% static 'images/loans/personal-loan.jpg' %}" alt="Personal Loan" class="w-100" style="height: 180px; object-fit: cover;">
+          <div class="card-body p-3 d-flex flex-direction-column">
+            <h5 class="fw-bold text-dark mb-1">Personal Loan</h5>
+            <div class="text-success fw-bold small mb-2">Starting at 11.50% p.a.</div>
+            <p class="text-muted small mb-3 flex-grow-1">
+              Instant funds for medical requirements, weddings, or renovations with minimal documentation.
+            </p>
+            <a href="/loans-info/" class="btn btn-bnb-primary btn-sm w-100">Check Eligibility</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 6. SPECIALIZED BANKING SECTORS ================= -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="text-primary fw-bold text-uppercase letter-spacing-1 small">Serving Every Corner of India</span>
+      <h2 class="fw-bold text-dark">Specialized Banking Services</h2>
+    </div>
+
+    <div class="row g-4 align-items-center">
+      <!-- Business Banking -->
+      <div class="col-lg-4 col-md-6">
+        <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100">
+          <img src="{% static 'images/banking/business-banking.jpg' %}" alt="Business Banking" style="height: 200px; object-fit: cover;">
+          <div class="card-body p-4">
+            <h5 class="fw-bold text-dark">MSME & Business Banking</h5>
+            <p class="text-muted small">
+              Working capital lines, current accounts with unlimited free RTGS/NEFT, and commercial credit solutions tailored to Indian enterprises.
+            </p>
+            <a href="/business/" class="btn btn-outline-primary btn-sm">Learn More &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rural Banking -->
+      <div class="col-lg-4 col-md-6">
+        <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100">
+          <img src="{% static 'images/banking/rural-banking.jpg' %}" alt="Agricultural Banking" style="height: 200px; object-fit: cover;">
+          <div class="card-body p-4">
+            <h5 class="fw-bold text-dark">Agricultural & Rural Banking</h5>
+            <p class="text-muted small">
+              Kisan Credit Cards (KCC), solar pump subsidies, crop loan support, and simplified banking for rural communities across the nation.
+            </p>
+            <a href="/rural/" class="btn btn-outline-primary btn-sm">Learn More &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- NRI Banking -->
+      <div class="col-lg-4 col-md-12">
+        <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100">
+          <img src="{% static 'images/banking/nri-banking.jpg' %}" alt="NRI Banking" style="height: 200px; object-fit: cover;">
+          <div class="card-body p-4">
+            <h5 class="fw-bold text-dark">NRI Banking Services</h5>
+            <p class="text-muted small">
+              NRE/NRO accounts, tax-free repatriation, competitive forex yields, and specialized wealth advisory for Non-Resident Indians.
+            </p>
+            <a href="/nri/" class="btn btn-outline-primary btn-sm">Learn More &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 7. SECURITY AWARENESS SECTION ================= -->
+<section class="py-5 bg-white border-top">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-5 text-center">
+        <img src="{% static 'images/security/security-awareness.jpg' %}" alt="Security Awareness" class="img-fluid rounded-4 shadow" style="max-height: 380px;">
+      </div>
+      <div class="col-lg-7">
+        <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-1 mb-2 fw-bold">
+          <i class="bi bi-shield-lock-fill me-1"></i> RBI SAFE BANKING GUIDELINES
+        </span>
+        <h2 class="fw-bold text-dark mb-3">Security Awareness: Safe Digital Banking</h2>
+        <p class="text-secondary mb-4">
+          At Bharat Nidhi Bank, safeguarding your hard-earned funds is our highest priority. Follow these four golden safety principles:
+        </p>
+
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <div class="p-3 bg-light rounded-3 border-start border-danger border-4">
+              <h6 class="fw-bold text-dark mb-1"><i class="bi bi-x-octagon-fill text-danger me-2"></i>Never Share OTP</h6>
+              <p class="text-muted small mb-0">No bank executive will ever ask for your 6-digit One Time Password.</p>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="p-3 bg-light rounded-3 border-start border-danger border-4">
+              <h6 class="fw-bold text-dark mb-1"><i class="bi bi-key-fill text-danger me-2"></i>Protect Passwords</h6>
+              <p class="text-muted small mb-0">Never disclose net-banking passwords or write them in public spaces.</p>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="p-3 bg-light rounded-3 border-start border-danger border-4">
+              <h6 class="fw-bold text-dark mb-1"><i class="bi bi-credit-card-2-front-fill text-danger me-2"></i>Keep PIN Secret</h6>
+              <p class="text-muted small mb-0">Cover ATM keypads while entering your 4-digit Card PIN.</p>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="p-3 bg-light rounded-3 border-start border-danger border-4">
+              <h6 class="fw-bold text-dark mb-1"><i class="bi bi-link-45deg text-danger me-2"></i>Beware Phishing Links</h6>
+              <p class="text-muted small mb-0">Do not click unverified SMS links promising lottery or loan waivers.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <a href="/security-info/" class="btn btn-bnb-navy btn-sm px-4">
+            <i class="bi bi-shield-check me-1"></i> Read Complete Security Advisory
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 8. BRANCH & CUSTOMER SUPPORT ================= -->
+<section class="py-5 bg-light border-top">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-6">
+        <h3 class="fw-bold text-dark mb-3">Dedicated Customer Support 24x7</h3>
+        <p class="text-secondary mb-4">
+          Need assistance with your account, fund transfers, or loan applications? Our team of branch managers and support officers are ready to assist you.
+        </p>
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="bg-primary text-white rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+            <i class="bi bi-telephone-fill fs-5"></i>
+          </div>
+          <div>
+            <div class="text-muted small">Toll-Free Customer Care Helpline</div>
+            <div class="fw-bold fs-5 text-dark">1800-000-1947 / 1800-000-2026</div>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-3 mb-4">
+          <div class="bg-success text-white rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+            <i class="bi bi-envelope-fill fs-5"></i>
+          </div>
+          <div>
+            <div class="text-muted small">Customer Service Email</div>
+            <div class="fw-bold fs-6 text-dark">customercare@bharatnidhibank.demo</div>
+          </div>
+        </div>
+        <a href="/support/" class="btn btn-bnb-primary px-4">
+          <i class="bi bi-chat-left-dots-fill me-2"></i> Submit Service Ticket
+        </a>
+      </div>
+      <div class="col-lg-6">
+        <div class="card border-0 shadow rounded-4 overflow-hidden">
+          <img src="{% static 'images/banking/branch-banking.jpg' %}" alt="Branch Banking" class="w-100" style="max-height: 320px; object-fit: cover;">
+          <div class="card-body p-3 bg-white">
+            <h6 class="fw-bold mb-1">Over 4,500 Fictional Branches Pan-India</h6>
+            <p class="text-muted small mb-0">Visit your nearest branch for personalized consultations and locker facilities.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

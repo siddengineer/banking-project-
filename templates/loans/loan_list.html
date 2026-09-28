@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Loans &amp; Lending | Bharat Nidhi Bank{% endblock %}
+
+{% block content %}
+<div class="bnb-page-container">
+  <!-- Top Header -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 pb-2 border-bottom">
+    <div>
+      <h2 class="h3 fw-bold text-dark mb-1">
+        <i class="bi bi-cash-coin text-primary me-2"></i> Loans &amp; Financing
+      </h2>
+      <p class="text-muted small mb-0">Empowering your dreams with competitive interest rates and flexible tenures</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'loans:apply' %}" class="btn btn-bnb-primary btn-sm px-3 shadow-sm">
+        <i class="bi bi-file-earmark-plus me-1"></i> Apply for a New Loan
+      </a>
+      <a href="{% url 'core:loans_info' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-info-circle me-1"></i> View Interest Rates
+      </a>
+    </div>
+  </div>
+
+  <!-- Interactive EMI Calculator Callout Banner -->
+  <div class="card border-0 rounded-4 shadow-sm text-white mb-4 overflow-hidden" style="background: linear-gradient(135deg, #0B1B3D 0%, #1A56DB 100%);">
+    <div class="card-body p-4">
+      <div class="row align-items-center">
+        <div class="col-lg-7">
+          <div class="badge bg-warning text-dark font-monospace mb-2 px-3 py-1">CALCULATOR</div>
+          <h3 class="h4 fw-bold mb-2">Plan Your Repayments with Ease</h3>
+          <p class="text-white-50 mb-3 small">
+            Calculate your monthly Equated Monthly Installment (EMI) instantly based on your loan requirement, tenure, and competitive interest rates.
+          </p>
+          <div class="row g-2">
+            <div class="col-sm-4">
+              <label class="small text-white-50">Loan Amount (₹)</label>
+              <input type="number" id="calcAmt" class="form-control form-control-sm" value="500000" step="10000">
+            </div>
+            <div class="col-sm-4">
+              <label class="small text-white-50">Interest Rate (% p.a.)</label>
+              <input type="number" id="calcRate" class="form-control form-control-sm" value="8.50" step="0.1">
+            </div>
+            <div class="col-sm-4">
+              <label class="small text-white-50">Tenure (Months)</label>
+              <input type="number" id="calcTenure" class="form-control form-control-sm" value="60" step="6">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5 text-lg-end mt-4 mt-lg-0 border-start border-white-50 ps-lg-4">
+          <div class="text-white-50 small text-uppercase letter-spacing-1">Estimated Monthly EMI</div>
+          <div class="display-6 fw-bold text-warning my-1" id="calcEmiDisplay">₹10,258</div>
+          <div class="small text-white-50" id="calcTotalDisplay">Total Interest: ₹1,15,480 &bull; Total: ₹6,15,480</div>
+          <div class="mt-3">
+            <a href="{% url 'loans:apply' %}" class="btn btn-warning btn-sm fw-bold px-4">
+              Apply With This EMI &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- My Existing Loans / Applications -->
+  <div class="card border shadow-sm rounded-4 overflow-hidden mb-5">
+    <div class="card-header bg-white py-3 px-4 border-bottom d-flex justify-content-between align-items-center">
+      <h5 class="h6 fw-bold text-dark mb-0">
+        <i class="bi bi-clock-history text-primary me-2"></i> My Loan Applications &amp; Accounts
+      </h5>
+      <span class="badge bg-light text-secondary border">{{ loans|length }} Records</span>
+    </div>
+
+    {% if loans %}
+      <div class="table-responsive">
+        <table class="bnb-table table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Application #</th>
+              <th>Loan Category</th>
+              <th>Amount Requested</th>
+              <th>Tenure</th>
+              <th>Application Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for l in loans %}
+              <tr>
+                <td class="font-monospace fw-bold text-primary">LA-{{ l.pk }}</td>
+                <td class="fw-semibold text-dark">{{ l.loan_type.name }}</td>
+                <td class="fw-bold text-dark">₹{{ l.amount_requested }}</td>
+                <td>{{ l.tenure_months }} Months</td>
+                <td>
+                  <span class="badge {% if l.status == 'APPROVED' %}bg-success{% elif l.status == 'SUBMITTED' or l.status == 'UNDER_REVIEW' %}bg-warning text-dark{% elif l.status == 'REJECTED' %}bg-danger{% else %}bg-secondary{% endif %}">
+                    {{ l.get_status_display }}
+                  </span>
+                </td>
+                <td>
+                  <a href="{% url 'loans:detail' pk=l.pk %}" class="btn btn-outline-primary btn-sm">
+                    View Details
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="text-center py-5 bg-white">
+        <i class="bi bi-file-earmark-text text-muted fs-1 mb-2 d-block opacity-50"></i>
+        <h6 class="fw-bold text-dark">No Active Loan Applications</h6>
+        <p class="text-muted small mb-3">You haven't submitted any loan requests yet.</p>
+        <a href="{% url 'loans:apply' %}" class="btn btn-bnb-primary btn-sm px-4">
+          <i class="bi bi-plus-circle me-1"></i> Apply for a Loan Now
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Loan Products Showcase Grid -->
+  <h4 class="h5 fw-bold text-dark mb-3">Popular Retail Loan Offerings</h4>
+  <div class="row g-4">
+    <div class="col-md-6 col-lg-3">
+      <div class="card h-100 border shadow-sm rounded-4 overflow-hidden">
+        <img src="{% static 'images/loans/home-loan.jpg' %}" alt="Home Loan" class="card-img-top" style="height: 160px; object-fit: cover;">
+        <div class="card-body p-3">
+          <div class="badge bg-primary-subtle text-primary mb-1">From 8.40% p.a.</div>
+          <h5 class="fw-bold text-dark fs-6 mb-1">Apna Ghar Home Loan</h5>
+          <p class="text-muted small mb-3">Tenure up to 30 years with zero prepayment charges and quick sanction.</p>
+          <a href="{% url 'loans:apply' %}" class="btn btn-outline-primary btn-sm w-100">Apply Now</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="card h-100 border shadow-sm rounded-4 overflow-hidden">
+        <img src="{% static 'images/loans/personal-loan.jpg' %}" alt="Personal Loan" class="card-img-top" style="height: 160px; object-fit: cover;">
+        <div class="card-body p-3">
+          <div class="badge bg-primary-subtle text-primary mb-1">From 10.50% p.a.</div>
+          <h5 class="fw-bold text-dark fs-6 mb-1">Instant Personal Loan</h5>
+          <p class="text-muted small mb-3">Simulated collateral-free emergency funding for wedding, travel, or medical needs.</p>
+          <a href="{% url 'loans:apply' %}" class="btn btn-outline-primary btn-sm w-100">Apply Now</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="card h-100 border shadow-sm rounded-4 overflow-hidden">
+        <img src="{% static 'images/loans/education-loan.jpg' %}" alt="Education Loan" class="card-img-top" style="height: 160px; object-fit: cover;">
+        <div class="card-body p-3">
+          <div class="badge bg-primary-subtle text-primary mb-1">From 8.15% p.a.</div>
+          <h5 class="fw-bold text-dark fs-6 mb-1">Vidya Nidhi Education Loan</h5>
+          <p class="text-muted small mb-3">Covers 100% course tuition fees for top colleges in India and abroad.</p>
+          <a href="{% url 'loans:apply' %}" class="btn btn-outline-primary btn-sm w-100">Apply Now</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="card h-100 border shadow-sm rounded-4 overflow-hidden">
+        <img src="{% static 'images/loans/vehicle-loan.jpg' %}" alt="Vehicle Loan" class="card-img-top" style="height: 160px; object-fit: cover;">
+        <div class="card-body p-3">
+          <div class="badge bg-primary-subtle text-primary mb-1">From 8.70% p.a.</div>
+          <h5 class="fw-bold text-dark fs-6 mb-1">Gati Vehicle Loan</h5>
+          <p class="text-muted small mb-3">Finance up to 90% on-road cost for electric and conventional cars/two-wheelers.</p>
+          <a href="{% url 'loans:apply' %}" class="btn btn-outline-primary btn-sm w-100">Apply Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const pInput = document.getElementById('calcAmt');
+  const rInput = document.getElementById('calcRate');
+  const nInput = document.getElementById('calcTenure');
+  const emiDisplay = document.getElementById('calcEmiDisplay');
+  const totalDisplay = document.getElementById('calcTotalDisplay');
+
+  function calculate() {
+    const P = parseFloat(pInput.value) || 0;
+    const annualRate = parseFloat(rInput.value) || 0;
+    const N = parseInt(nInput.value) || 1;
+    const r = (annualRate / 12) / 100;
+
+    if (P > 0 && r > 0 && N > 0) {
+      const emi = (P * r * Math.pow(1 + r, N)) / (Math.pow(1 + r, N) - 1);
+      const totalPayable = emi * N;
+      const totalInterest = totalPayable - P;
+
+      emiDisplay.innerText = '₹' + Math.round(emi).toLocaleString('en-IN');
+      totalDisplay.innerText = `Total Interest: ₹${Math.round(totalInterest).toLocaleString('en-IN')} • Total: ₹${Math.round(totalPayable).toLocaleString('en-IN')}`;
+    }
+  }
+
+  [pInput, rInput, nInput].forEach(inp => inp.addEventListener('input', calculate));
+  calculate();
+});
+</script>
+{% endblock %}

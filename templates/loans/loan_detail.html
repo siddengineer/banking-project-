@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Loan Application LA-{{ loan.pk }} | Bharat Nidhi Bank{% endblock %}
+
+{% block content %}
+<div class="bnb-page-container">
+  <!-- Back Breadcrumb & Header -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 pb-2 border-bottom">
+    <div class="d-flex align-items-center gap-3">
+      <a href="{% url 'loans:list' %}" class="btn btn-outline-secondary btn-sm rounded-circle p-2" title="Back to Loans">
+        <i class="bi bi-arrow-left"></i>
+      </a>
+      <div>
+        <h2 class="h4 fw-bold text-dark mb-0">Loan Application LA-{{ loan.pk }}</h2>
+        <span class="text-muted small">{{ loan.loan_type.name }} &bull; Applied on {{ loan.applied_at|date:"d M Y H:i" }}</span>
+      </div>
+    </div>
+    <div>
+      <span class="badge {% if loan.status == 'APPROVED' %}bg-success-subtle text-success border border-success-subtle{% elif loan.status == 'SUBMITTED' or loan.status == 'UNDER_REVIEW' %}bg-warning-subtle text-warning border border-warning-subtle{% elif loan.status == 'REJECTED' %}bg-danger-subtle text-danger border border-danger-subtle{% else %}bg-secondary{% endif %} px-3 py-2 fs-6">
+        {{ loan.get_status_display }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Loan Overview Cards -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-4">
+      <div class="card border shadow-sm rounded-4 p-4 bg-white h-100">
+        <span class="text-muted small text-uppercase letter-spacing-1 d-block mb-1">Requested Principal</span>
+        <div class="fs-2 fw-bold text-primary">₹{{ loan.amount_requested }}</div>
+        <div class="small text-muted mt-2">Tenure: <strong>{{ loan.tenure_months }} Months</strong></div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card border shadow-sm rounded-4 p-4 bg-white h-100">
+        <span class="text-muted small text-uppercase letter-spacing-1 d-block mb-1">Product Category</span>
+        <div class="fs-4 fw-bold text-dark">{{ loan.loan_type.name }}</div>
+        <div class="small text-success mt-2">Interest Rate: <strong>{{ loan.loan_type.interest_rate }}% p.a.</strong></div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card border shadow-sm rounded-4 p-4 bg-white h-100">
+        <span class="text-muted small text-uppercase letter-spacing-1 d-block mb-1">Appraisal Status</span>
+        <div class="fs-5 fw-bold text-dark">{{ loan.get_status_display }}</div>
+        {% if loan.loan_account %}
+          <div class="small text-primary mt-2">Active Loan Account: <strong>{{ loan.loan_account.account_number }}</strong></div>
+        {% else %}
+          <div class="small text-muted mt-2">Under appraisal by BNB Underwriting Desk</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Reason or Details -->
+  {% if loan.status == 'REJECTED' and loan.rejection_reason %}
+    <div class="alert alert-danger py-3 px-4 rounded-4 shadow-sm mb-4">
+      <h6 class="fw-bold mb-1"><i class="bi bi-x-circle-fill me-1"></i> Application Rejection Reason</h6>
+      <p class="mb-0 small">{{ loan.rejection_reason }}</p>
+    </div>
+  {% endif %}
+
+  <!-- Application Summary Box -->
+  <div class="card border shadow-sm rounded-4 overflow-hidden mb-4">
+    <div class="card-header bg-white py-3 px-4 border-bottom fw-bold text-dark">
+      <i class="bi bi-card-checklist text-primary me-2"></i> Application Summary
+    </div>
+    <div class="card-body p-4">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <span class="text-muted small d-block">Stated Purpose</span>
+          <div class="text-dark fst-italic">"{{ loan.purpose }}"</div>
+        </div>
+        {% if loan.sanctioned_amount %}
+          <div class="col-md-3">
+            <span class="text-muted small d-block">Sanctioned Amount</span>
+            <div class="fw-bold text-success fs-5">₹{{ loan.sanctioned_amount }}</div>
+          </div>
+          <div class="col-md-3">
+            <span class="text-muted small d-block">Sanctioned Rate</span>
+            <div class="fw-bold text-dark fs-5">{{ loan.sanctioned_rate }}%</div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Repayment Installments Table (If Disbursed) -->
+  {% if loan.loan_account %}
+    <div class="card border shadow-sm rounded-4 overflow-hidden mb-4">
+      <div class="card-header bg-white py-3 px-4 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <h5 class="h6 fw-bold text-dark mb-0">
+            <i class="bi bi-calendar-check text-success me-2"></i> EMI Repayment Schedule
+          </h5>
+          <small class="text-muted">Monthly installments for Account {{ loan.loan_account.account_number }} (Monthly EMI: ₹{{ loan.loan_account.emi_amount }})</small>
+        </div>
+        <span class="badge bg-success font-monospace">DISBURSED &amp; ACTIVE</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="bnb-table table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Due Date</th>
+              <th>Principal</th>
+              <th>Interest</th>
+              <th>Total EMI</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for inst in loan.loan_account.installments.all %}
+              <tr>
+                <td class="fw-bold text-muted">{{ inst.installment_no }}</td>
+                <td>{{ inst.due_date|date:"d-m-Y" }}</td>
+                <td>₹{{ inst.principal_amount }}</td>
+                <td>₹{{ inst.interest_amount }}</td>
+                <td class="fw-bold text-primary">₹{{ inst.total_amount }}</td>
+                <td>
+                  <span class="badge {% if inst.status == 'PAID' %}bg-success{% elif inst.status == 'OVERDUE' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
+                    {{ inst.status }}
+                  </span>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="6" class="text-center py-3 text-muted">No repayment installments generated yet.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

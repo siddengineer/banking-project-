@@ -1,0 +1,14 @@
+{% if breadcrumbs %}
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb py-2 px-3 bg-white rounded border small">
+    <li class="breadcrumb-item"><a href="{% if user.is_authenticated %}/dashboard/{% else %}/{% endif %}" class="text-decoration-none text-primary"><i class="bi bi-house-door-fill"></i> Home</a></li>
+    {% for b in breadcrumbs %}
+      {% if forloop.last %}
+        <li class="breadcrumb-item active text-secondary fw-semibold" aria-current="page">{{ b.text }}</li>
+      {% else %}
+        <li class="breadcrumb-item"><a href="{{ b.url }}" class="text-decoration-none text-primary">{{ b.text }}</a></li>
+      {% endif %}
+    {% endfor %}
+  </ol>
+</nav>
+{% endif %}

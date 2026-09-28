@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ticket {{ ticket.ticket_number }} | Bharat Nidhi Bank{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 pb-2 border-bottom">
+      <div class="d-flex align-items-center gap-3">
+        <a href="{% url 'support:list' %}" class="btn btn-outline-secondary btn-sm rounded-circle p-2" title="Back to Tickets">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+          <h2 class="h4 fw-bold text-dark mb-0">Ticket {{ ticket.ticket_number }}</h2>
+          <span class="text-muted small">Category: {{ ticket.get_category_display }} &bull; Logged on {{ ticket.created_at|date:"d M Y, H:i" }}</span>
+        </div>
+      </div>
+      <div>
+        <span class="badge {% if ticket.status == 'RESOLVED' or ticket.status == 'CLOSED' %}bg-success-subtle text-success border border-success-subtle{% elif ticket.status == 'IN_PROGRESS' %}bg-warning-subtle text-warning border border-warning-subtle{% else %}bg-primary-subtle text-primary border border-primary-subtle{% endif %} px-3 py-2 fs-6">
+          {{ ticket.get_status_display }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Ticket Subject Box -->
+    <div class="card border shadow-sm rounded-4 overflow-hidden mb-4">
+      <div class="card-header bg-light py-3 px-4 border-bottom">
+        <span class="text-muted small text-uppercase letter-spacing-1 d-block mb-1">Subject</span>
+        <h5 class="fw-bold text-dark mb-0">{{ ticket.subject }}</h5>
+      </div>
+
+      <div class="card-body p-4">
+        <!-- Customer Query Thread -->
+        <div class="d-flex gap-3 mb-4">
+          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 44px; height: 44px; flex-shrink: 0;">
+            {{ request.user.first_name|default:request.user.username|slice:":1"|upper }}
+          </div>
+          <div class="flex-grow-1">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <strong class="text-dark">{{ request.user.customerprofile.full_name|default:request.user.username }}</strong>
+              <small class="text-muted">{{ ticket.created_at|date:"d M Y, H:i" }}</small>
+            </div>
+            <div class="p-3 bg-light rounded-3 text-secondary" style="white-space: pre-wrap;">{{ ticket.description }}</div>
+          </div>
+        </div>
+
+        <!-- Bank Helpdesk Response Thread -->
+        {% if ticket.admin_response %}
+          <div class="d-flex gap-3 pt-3 border-top">
+            <div class="rounded-circle bg-bnb-navy text-white d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; flex-shrink: 0; background-color: var(--bnb-navy);">
+              <i class="bi bi-bank"></i>
+            </div>
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <strong class="text-primary">Bharat Nidhi Bank Support Desk</strong>
+                {% if ticket.resolved_at %}
+                  <small class="text-muted">{{ ticket.resolved_at|date:"d M Y, H:i" }}</small>
+                {% endif %}
+              </div>
+              <div class="p-3 bg-primary-subtle border border-primary-subtle rounded-3 text-dark" style="white-space: pre-wrap;">{{ ticket.admin_response }}</div>
+            </div>
+          </div>
+        {% else %}
+          <div class="p-3 bg-light rounded-3 border text-center text-muted small mt-3">
+            <i class="bi bi-hourglass-split me-1"></i> Your request has been assigned to a customer support specialist. A response will be posted here shortly.
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

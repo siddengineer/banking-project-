@@ -1,0 +1,28 @@
+{% if messages %}
+<div class="bnb-messages-container mb-4">
+  {% for message in messages %}
+    <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success alert-auto-dismiss{% elif message.tags == 'warning' %}alert-warning{% else %}alert-primary{% endif %} alert-dismissible fade show d-flex align-items-center shadow-sm" role="alert">
+      <div class="me-3 fs-5">
+        {% if message.tags == 'error' %}
+          <i class="bi bi-exclamation-octagon-fill text-danger"></i>
+        {% elif message.tags == 'success' %}
+          <i class="bi bi-check-circle-fill text-success"></i>
+        {% elif message.tags == 'warning' %}
+          <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+        {% else %}
+          <i class="bi bi-info-circle-fill text-primary"></i>
+        {% endif %}
+      </div>
+      <div class="flex-grow-1">
+        {% if "DEMO MODE" in message.message %}
+          <span class="bnb-demo-badge me-2">DEMO SIMULATION</span>
+          <strong class="text-dark">{{ message.message }}</strong>
+        {% else %}
+          {{ message }}
+        {% endif %}
+      </div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}

@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard | Bharat Nidhi Bank Net-Banking{% endblock %}
+
+{% block content %}
+<div class="bnb-dashboard">
+  <!-- Top Greeting & Live Session Bar -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 pb-2 border-bottom">
+    <div>
+      <h2 class="h3 fw-bold text-dark mb-1">
+        Namaste, {{ customer.full_name }}! 👋
+      </h2>
+      <div class="text-secondary small">
+        <span class="fw-semibold">CIF Number:</span> {{ customer.customer_number }} &bull; 
+        <span class="fw-semibold">Last Login:</span> {{ user.last_login|date:"d-m-Y H:i"|default:"First login" }}
+      </div>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+        <i class="bi bi-shield-check me-1"></i> Net-Banking Active
+      </span>
+      <a href="/transfers/new/" class="btn btn-bnb-accent shadow-sm">
+        <i class="bi bi-send-fill me-1"></i> Quick Transfer
+      </a>
+    </div>
+  </div>
+
+  <!-- Security Advisory Alert -->
+  {% include "components/security_notice.html" %}
+
+  <!-- KPI / Metrics Overview Cards -->
+  <div class="row g-3 mb-4">
+    <!-- Total Balance Card -->
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm rounded-3 p-3 bg-white h-100 border-start border-primary border-4">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="text-muted small text-uppercase fw-bold">Total Available Balance</span>
+          <i class="bi bi-wallet2 fs-4 text-primary"></i>
+        </div>
+        <div class="fs-2 fw-bold text-dark">
+          <span class="text-warning">₹</span>{{ total_balance|floatformat:2 }}
+        </div>
+        <div class="small text-muted mt-1">Across {{ accounts|length }} active bank account{{ accounts|length|pluralize }}</div>
+      </div>
+    </div>
+
+    <!-- Active Cards & Quick Services -->
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm rounded-3 p-3 bg-white h-100 border-start border-warning border-4">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="text-muted small text-uppercase fw-bold">Active Cards & Payees</span>
+          <i class="bi bi-credit-card-2-front fs-4 text-warning"></i>
+        </div>
+        <div class="fs-2 fw-bold text-dark">
+          {{ active_cards_count|default:"1" }} <span class="fs-6 fw-normal text-muted">Card(s) &bull; {{ beneficiaries_count|default:"2" }} Payee(s)</span>
+        </div>
+        <div class="small mt-1">
+          <a href="/cards/" class="text-primary text-decoration-none fw-semibold">Manage Cards</a> &bull; 
+          <a href="/beneficiaries/" class="text-primary text-decoration-none fw-semibold">Manage Beneficiaries</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Support & Notifications -->
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm rounded-3 p-3 bg-white h-100 border-start border-info border-4">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="text-muted small text-uppercase fw-bold">Notifications & Support</span>
+          <i class="bi bi-bell fs-4 text-info"></i>
+        </div>
+        <div class="fs-2 fw-bold text-dark">
+          {{ unread_notifications|default:"0" }} <span class="fs-6 fw-normal text-muted">Unread Alerts</span>
+        </div>
+        <div class="small mt-1">
+          <a href="/notifications/" class="text-primary text-decoration-none fw-semibold">View Alerts</a> &bull; 
+          <a href="/support/" class="text-secondary text-decoration-none">{{ pending_requests|default:"0" }} Open Tickets</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Primary Account Cards Row -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="h5 fw-bold text-dark mb-0">My Bank Accounts</h4>
+    <a href="/accounts/" class="text-primary small text-decoration-none fw-semibold">View All Accounts &rarr;</a>
+  </div>
+
+  {% if accounts %}
+    <div class="row g-3 mb-5">
+      {% for account in accounts %}
+        <div class="col-lg-6">
+          <div class="bnb-account-card">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="bnb-account-type">{{ account.account_type.type_name }} Account</span>
+              <span class="badge {% if account.status == 'ACTIVE' %}bg-success{% elif account.status == 'FROZEN' %}bg-danger{% else %}bg-secondary{% endif %} text-white">
+                {{ account.status }}
+              </span>
+            </div>
+            
+            <div class="bnb-account-balance">
+              <span class="fs-4 text-warning">₹</span> {{ account.balance }}
+            </div>
+
+            <div class="d-flex justify-content-between align-items-end mt-3">
+              <div>
+                <div class="text-white-50 small mb-1">Account Number & Branch</div>
+                <div class="bnb-account-num mb-1">{{ account.masked_number }}</div>
+                <div class="text-white-50 small" style="font-size: 0.75rem;">
+                  {{ account.branch.branch_name }} (IFSC: {{ account.branch.ifsc_code }})
+                </div>
+              </div>
+              <div class="d-flex gap-2">
+                <a href="/accounts/{{ account.account_number }}/" class="btn btn-sm btn-outline-light rounded-pill px-3">
+                  Details
+                </a>
+                <a href="/statements/?account={{ account.pk }}" class="btn btn-sm btn-light rounded-pill px-3">
+                  Statement
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card border-0 shadow-sm p-4 text-center my-4">
+      <p class="text-muted mb-2">No bank accounts linked to your profile yet.</p>
+      <p class="small text-secondary">Open a new account at your nearest Bharat Nidhi Bank branch.</p>
+    </div>
+  {% endif %}
+
+  <!-- Quick Banking Actions Strip -->
+  <div class="card border-0 shadow-sm p-3 mb-5 bg-white rounded-3">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <h5 class="h6 fw-bold text-dark text-uppercase letter-spacing-1 mb-0">
+        <i class="bi bi-grid-fill text-primary me-2"></i> Quick Actions
+      </h5>
+    </div>
+    <div class="row g-2">
+      <div class="col-6 col-sm-4 col-md-2">
+        <a href="/transfers/new/" class="btn btn-light border w-100 py-3 d-flex flex-column align-items-center text-decoration-none text-dark hover-shadow">
+          <i class="bi bi-arrow-left-right fs-4 text-primary mb-1"></i>
+          <span class="small fw-semibold">Transfer</span>
+        </a>
+      </div>
+      <div class="col-6 col-sm-4 col-md-2">
+        <a href="/statements/" class="btn btn-light border w-100 py-3 d-flex flex-column align-items-center text-decoration-none text-dark hover-shadow">
+          <i class="bi bi-file-earmark-text fs-4 text-success mb-1"></i>
+          <span class="small fw-semibold">Statements</span>
+        </a>
+      </div>
+      <div class="col-6 col-sm-4 col-md-2">
+        <a href="/beneficiaries/" class="btn btn-light border w-100 py-3 d-flex flex-column align-items-center text-decoration-none text-dark hover-shadow">
+          <i class="bi bi-person-plus fs-4 text-warning mb-1"></i>
+          <span class="small fw-semibold">Beneficiaries</span>
+        </a>
+      </div>
+      <div class="col-6 col-sm-4 col-md-2">
+        <a href="/cards/" class="btn btn-light border w-100 py-3 d-flex flex-column align-items-center text-decoration-none text-dark hover-shadow">
+          <i class="bi bi-credit-card-2-front fs-4 text-info mb-1"></i>
+          <span class="small fw-semibold">My Cards</span>
+        </a>
+      </div>
+      <div class="col-6 col-sm-4 col-md-2">
+        <a href="/deposits/open/" class="btn btn-light border w-100 py-3 d-flex flex-column align-items-center text-decoration-none text-dark hover-shadow">
+          <i class="bi bi-piggy-bank fs-4 text-danger mb-1"></i>
+          <span class="small fw-semibold">Open FD/RD</span>
+        </a>
+      </div>
+      <div class="col-6 col-sm-4 col-md-2">
+        <a href="/loans/apply/" class="btn btn-light border w-100 py-3 d-flex flex-column align-items-center text-decoration-none text-dark hover-shadow">
+          <i class="bi bi-cash-stack fs-4 text-primary mb-1"></i>
+          <span class="small fw-semibold">Apply Loan</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Transactions Table -->
+  <div class="card border shadow-sm mb-4">
+    <div class="card-header bg-white py-3 px-3 d-flex justify-content-between align-items-center">
+      <h5 class="h6 fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+        <i class="bi bi-clock-history text-primary"></i> Recent Transactions
+      </h5>
+      <a href="/transactions/" class="btn btn-outline-primary btn-sm">Full History &rarr;</a>
+    </div>
+    <div class="card-body p-0">
+      {% if recent_transactions %}
+        <div class="bnb-table-responsive">
+          <table class="table bnb-table table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Date & Time</th>
+                <th>Reference</th>
+                <th>Account</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Balance After</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for t in recent_transactions %}
+                <tr>
+                  <td class="text-secondary small">{{ t.created_at|date:"d-m-Y H:i" }}</td>
+                  <td class="font-monospace fw-semibold small">{{ t.transfer.reference_number }}</td>
+                  <td class="font-monospace small text-muted">{{ t.account.masked_number }}</td>
+                  <td>{{ t.transfer.remarks|default:t.transfer.get_transfer_type_display }}</td>
+                  <td>
+                    {% if t.entry_type == 'DEBIT' %}
+                      <span class="text-danger fw-bold"><i class="bi bi-arrow-up-right"></i> DR</span>
+                    {% else %}
+                      <span class="text-success fw-bold"><i class="bi bi-arrow-down-left"></i> CR</span>
+                    {% endif %}
+                  </td>
+                  <td class="fw-bold {% if t.entry_type == 'DEBIT' %}text-danger{% else %}text-success{% endif %}">
+                    ₹{{ t.amount }}
+                  </td>
+                  <td class="fw-semibold">₹{{ t.balance_after }}</td>
+                  <td>
+                    {% if t.status == 'SUCCESS' %}
+                      <span class="badge-bnb-success">SUCCESS</span>
+                    {% elif t.status == 'PENDING' %}
+                      <span class="badge-bnb-pending">PENDING</span>
+                    {% else %}
+                      <span class="badge-bnb-failed">{{ t.status }}</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="text-center py-4 text-muted">
+          <i class="bi bi-clock fs-2 text-secondary opacity-50 d-block mb-2"></i>
+          No transactions yet. Complete your first transfer to see activity here!
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

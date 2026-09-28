@@ -1,0 +1,95 @@
+{% load static %}
+<footer class="bnb-footer">
+  <div class="container">
+    <!-- Top Row: Logo & Tagline -->
+    <div class="row align-items-center mb-4 pb-3 border-bottom border-secondary border-opacity-25">
+      <div class="col-lg-6 col-md-8">
+        <div class="d-flex align-items-center gap-3">
+          <img src="{% static 'images/brand/bnb-logo-white.png' %}" alt="Bharat Nidhi Bank" style="height: 44px; width: auto;">
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-4 text-md-end mt-3 mt-md-0">
+        <span class="badge bg-warning text-dark px-3 py-2 fw-semibold">
+          <i class="bi bi-shield-lock-fill me-1"></i> 256-Bit SSL Encrypted Banking Simulation
+        </span>
+      </div>
+    </div>
+
+    <!-- 8 Banking Columns -->
+    <div class="row g-4">
+      <div class="col-6 col-md-4 col-lg-3">
+        <h6>Personal Banking</h6>
+        <ul>
+          <li><a href="/personal/">Savings Accounts</a></li>
+          <li><a href="/personal/">Salary Accounts</a></li>
+          <li><a href="/personal/">Current Accounts</a></li>
+          <li><a href="/cards-info/">Debit & Credit Cards</a></li>
+          <li><a href="/personal/">Senior Citizen Schemes</a></li>
+        </ul>
+      </div>
+
+      <div class="col-6 col-md-4 col-lg-3">
+        <h6>Loan Solutions</h6>
+        <ul>
+          <li><a href="/loans-info/">Home Loans</a></li>
+          <li><a href="/loans-info/">Vehicle Loans</a></li>
+          <li><a href="/loans-info/">Education Loans</a></li>
+          <li><a href="/loans-info/">Personal Loans</a></li>
+          <li><a href="/loans-info/">Gold Loans</a></li>
+        </ul>
+      </div>
+
+      <div class="col-6 col-md-4 col-lg-2">
+        <h6>Deposits & NRI</h6>
+        <ul>
+          <li><a href="/deposits-info/">Fixed Deposits (FD)</a></li>
+          <li><a href="/deposits-info/">Recurring Deposits (RD)</a></li>
+          <li><a href="/nri/">NRE / NRO Accounts</a></li>
+          <li><a href="/interest-rates/">Interest Rate Table</a></li>
+        </ul>
+      </div>
+
+      <div class="col-6 col-md-4 col-lg-2">
+        <h6>Digital & Rural</h6>
+        <ul>
+          <li><a href="/digital-info/">Net-Banking Portal</a></li>
+          <li><a href="/digital-info/">Mobile Banking Demo</a></li>
+          <li><a href="/rural/">Kisan Credit & Agri Loans</a></li>
+          <li><a href="/business/">MSME Business Banking</a></li>
+        </ul>
+      </div>
+
+      <div class="col-6 col-md-4 col-lg-2">
+        <h6>Support & Legal</h6>
+        <ul>
+          <li><a href="/support/">Customer Care</a></li>
+          <li><a href="/security-info/">Security Awareness</a></li>
+          <li><a href="/faq/">Frequently Asked Questions</a></li>
+          <li><a href="/contact/">Locate Branches</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom Disclaimer & Copyright -->
+    <div class="bnb-footer-bottom">
+      <div class="row align-items-center">
+        <div class="col-md-7 mb-2 mb-md-0">
+          <p class="mb-1 text-light small">
+            <strong>Disclaimer:</strong> Bharat Nidhi Bank (BNB) is an academic/demo banking simulation project and is <strong>not</strong> a real financial institution. No real currency or payment gateways are used.
+          </p>
+          <p class="mb-0 text-muted" style="font-size: 0.75rem;">
+            &copy; {% now "Y" %} Bharat Nidhi Bank. All Rights Reserved. Banking for a stronger Bharat.
+          </p>
+        </div>
+        <div class="col-md-5 text-md-end">
+          <div class="d-flex justify-content-md-end gap-3 small">
+            <a href="/security-info/">Security</a>
+            <a href="/about/">Terms & Privacy</a>
+            <a href="/support/">Accessibility</a>
+            <a href="/contact/">Branch Locator</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
